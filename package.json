@@ -1,0 +1,26 @@
+{
+  "name": "practicum-messenger",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines" : {
+    "npm" : ">=8.0.0",
+    "node" : ">=16.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "start": "vite build && tsc && node serverStatic.cjs"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.2",
+    "handlebars": "^4.7.8",
+    "sass": "^1.77.5",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.1",
+    "vite-plugin-handlebars": "^2.0.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
