@@ -36,6 +36,17 @@ export const navigateTo = (routeName: string) => {
   mount(...getPageData(page));
 }
 
+document.addEventListener('click', e => {
+  const routeName = e.target.getAttribute('page');
+  if (routeName) {
+    navigateTo(routeName);
+
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  }
+});
+
+
 export default function initRouter() {
   const { pathname } = window.location;
   const routeName = pathname.replace('/', '');
