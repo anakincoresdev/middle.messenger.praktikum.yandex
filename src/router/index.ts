@@ -37,7 +37,8 @@ export const navigateTo = (routeName: string) => {
 }
 
 document.addEventListener('click', e => {
-  const routeName = e.target.getAttribute('page');
+  const target = e.target as HTMLElement;
+  const routeName = target.getAttribute('page');
   if (routeName) {
     navigateTo(routeName);
 
