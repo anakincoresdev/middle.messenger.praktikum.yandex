@@ -1,0 +1,22 @@
+.ui-button {
+  background-color: #f8cb60;
+  color: #212228;
+  border-radius: 4px;
+  border: 0;
+  transition: background-color 0.3s, opacity 0.3s;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: $input-height;
+  overflow: hidden;
+  padding-right: 16px;
+  padding-left: 16px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+
+  &:hover {
+    background-color: rgba($main-color, .8);
+  }
+}
