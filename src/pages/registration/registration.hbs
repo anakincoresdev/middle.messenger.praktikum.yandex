@@ -1,0 +1,17 @@
+<main class="registration-page">
+	<form class="registration-page__form">
+		<h1>Регистрация</h1>
+		<div class="registration-page__grid">
+			{{> UIInputField type="text" name="first_name" label="Имя" }}
+			{{> UIInputField type="text" name="second_name" label="Фамилия" }}
+			{{> UIInputField type="text" name="phone" label="Телефон" }}
+			{{> UIInputField type="text" name="email" label="Email" }}
+			{{> UIInputField type="text" name="login" label="Логин" }}
+			{{> UIInputField type="text" name="password" label="Пароль" }}
+		</div>
+		{{> UIButton text="Зарегистрироваться" className="registration-page__button" }}
+		<div class="registration-page__footer">
+			<a class="link">Уже есть аккаунт? Войти</a>
+		</div>
+	</form>
+</main>

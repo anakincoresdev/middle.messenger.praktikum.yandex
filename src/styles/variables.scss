@@ -1,0 +1,15 @@
+// sizes
+$main-border-radius: 6px;
+$input-height: 38px;
+$form-width: 400px;
+
+// colors
+$main-color: #F8CB60;
+$second-color: #212228;
+
+// mixins
+@mixin form-title {
+  font-size: 30px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
