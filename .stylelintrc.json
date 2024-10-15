@@ -1,0 +1,13 @@
+{
+  "extends": ["stylelint-config-standard-scss","stylelint-config-prettier-scss"],
+  "plugins": ["stylelint-scss"],
+  "editor.codeActionsOnSave": {"source.fixAll.stylelint": true},
+  "rules": {
+    "at-rule-no-unknown": null,
+    "scss/at-rule-no-unknown": true,
+    "color-function-notation": null
+  },
+  "ignoreFiles": [
+    "dist/*"
+  ]
+}

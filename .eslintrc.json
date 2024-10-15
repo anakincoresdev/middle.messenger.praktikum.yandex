@@ -1,0 +1,28 @@
+{
+  "extends": "airbnb-base",
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "prettier"],
+  "settings": {
+    "import/resolver": {
+      "typescript": {} // this loads <rootdir>/tsconfig.json to eslint
+    }
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "jasmine": true
+  },
+  "rules": {
+    "no-shadow": "off", // replaced by ts-eslint rule below
+    "@typescript-eslint/no-shadow": "error",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+    "import/prefer-default-export": "off",
+    "max-len": [2, 100],
+    "arrow-parens": "off",
+    "import/no-extraneous-dependencies": "off",
+    "max-params": [2, 3],
+    "implicit-arrow-linebreak": "off",
+    "no-underscore-dangle": "off"
+  }
+}
