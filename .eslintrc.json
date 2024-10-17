@@ -23,6 +23,7 @@
     "import/no-extraneous-dependencies": "off",
     "max-params": [2, 3],
     "implicit-arrow-linebreak": "off",
-    "no-underscore-dangle": "off"
+    "no-underscore-dangle": "off",
+    "class-methods-use-this": "off"
   }
 }

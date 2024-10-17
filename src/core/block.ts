@@ -1,11 +1,9 @@
 import { EventBus } from '@/core/event-bus.ts';
-import { types } from 'sass';
+import Handlebars from 'handlebars';
 
 export type Props = Record<string, any>;
 
 export class Block {
-  render: () => string;
-
   static EVENTS = {
     INIT: 'init',
     FLOW_CDM: 'flow:component-did-mount',
@@ -55,6 +53,7 @@ export class Block {
       set(target: Props, prop: keyof Props, value: any) {
         // eslint-disable-next-line no-param-reassign
         target[prop] = value;
+        self.eventBus().emit(Block.EVENTS.FLOW_RENDER);
         return true;
       },
     };
@@ -74,8 +73,11 @@ export class Block {
   }
 
   _createDocumentElement() {
-    const { tagName } = this._meta;
-    return document.createElement(tagName);
+    const documentElement = document.createElement(this._meta.tagName);
+    if (this.props.className) {
+      documentElement.classList.add(this.props.className);
+    }
+    return documentElement;
   }
 
   _createResources() {
@@ -91,6 +93,8 @@ export class Block {
   dispatchComponentDidMount() {
     this.eventBus().emit(Block.EVENTS.FLOW_CDM);
   }
+
+  render(): string
 
   _render() {
     const block = this.render();
