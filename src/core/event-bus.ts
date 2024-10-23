@@ -4,7 +4,7 @@ type Listeners = Record<string, Array<Callback>>;
 
 function throwErrorIfEventNotListened(listeners: Listeners, eventName: string) {
   if (!listeners[eventName]) {
-    throw new Error(`There is no handler for "${eventName}" event`);
+    throw new Error(`Error: There is no handler for "${eventName}" event`);
   }
 }
 

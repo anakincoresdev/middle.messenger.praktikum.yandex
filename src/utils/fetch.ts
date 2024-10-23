@@ -55,7 +55,7 @@ const METHODS = {
 // Необязательный метод
 function queryStringify(data) {
   if (typeof data !== 'object') {
-    throw new Error('Data must be object');
+    throw new Error('Error: Data must be object');
   }
 
   // Здесь достаточно и [object Object] для объекта

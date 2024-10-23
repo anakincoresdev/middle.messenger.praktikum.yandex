@@ -1,3 +1,5 @@
+import { Component } from '@/core/component.ts';
+
 export enum RouteNames {
   Login = 'login',
   Registration = 'registration',
@@ -8,5 +10,5 @@ export enum RouteNames {
 
 export interface Route {
   name: RouteNames;
-  component: string;
+  component: () => Component;
 }

@@ -1,21 +1,15 @@
-import { Block, Props } from '@/core/block.ts';
-import Handlebars from 'handlebars';
+import { Component } from '@/core/component.ts';
+import { Props } from '@/core/types';
 import './ui-button.scss';
 
-const buttonTemplate = `
-  {{ text }}
+const template = `
+  <button class="ui-button">
+    {{ text }}
+  </button>
 `;
 
-export class UIButton extends Block {
-  constructor(props: Props) {
-    super('button', props);
-  }
-
+export class UIButton extends Component {
   render() {
-    const template = Handlebars.compile(buttonTemplate);
-    return template({
-      text: this.props.text,
-      className: this.props.className,
-    });
+    return this.compile(template);
   }
 }

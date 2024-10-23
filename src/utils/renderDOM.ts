@@ -1,14 +1,15 @@
-import { Block } from '@/core/block.ts';
+import { Component } from '@/core/component.ts';
 
-export function render(selector: string, block: Block) {
+export function render(selector: string, component: Component) {
   const root = document.querySelector(selector);
-  const content = block.getContent();
+  const content = component.getContent();
 
   if (content) {
+    root.innerHTML = '';
     root?.appendChild(content);
   }
 
-  block.dispatchComponentDidMount();
+  component.dispatchComponentDidMount();
 
   return root;
 }

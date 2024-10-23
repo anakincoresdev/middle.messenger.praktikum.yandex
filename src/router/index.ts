@@ -12,29 +12,16 @@ const get404PageView = () => {
   return page404!.component;
 };
 
-const mount = (page: string) => {
-  render('#app', page.component);
+const mount = (page: Route) => {
+  render('#app', page.component());
 };
-
-function getPageData(page: Route | undefined, context = {}): [string, {}] {
-  let pageView = '';
-  let pageContext = context;
-
-  if (page) {
-    pageView = page.component;
-  } else {
-    pageView = get404PageView();
-    pageContext = {
-      errorCode: '404',
-      errorText: 'Такой страницы не существует',
-    };
-  }
-
-  return [pageView, pageContext];
-}
 
 export const navigateTo = (routeName: string) => {
   const page = ROUTES.find(byRouteName(routeName));
+
+  if (!page) {
+    throw new Error('Error: This page does not exist');
+  }
 
   mount(page);
 };

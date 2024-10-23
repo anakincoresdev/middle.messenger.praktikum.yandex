@@ -3,8 +3,14 @@
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint", "prettier"],
   "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
     "import/resolver": {
-      "typescript": {} // this loads <rootdir>/tsconfig.json to eslint
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./tsconfig.json"
+      }
     }
   },
   "env": {
@@ -23,7 +29,6 @@
     "import/no-extraneous-dependencies": "off",
     "max-params": [2, 3],
     "implicit-arrow-linebreak": "off",
-    "no-underscore-dangle": "off",
-    "class-methods-use-this": "off"
+    "no-underscore-dangle": "off"
   }
 }
