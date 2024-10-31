@@ -1,10 +1,10 @@
 import { Component } from '@/core/component.ts';
 import { UIInputField } from '@/components/ui/ui-input-field/index.ts';
 import { MessengerSidebar } from '@/components/messenger/messenger-sidebar/index.ts';
-import './messenger-page.scss';
 import { MessengerCard } from '@/components/messenger/messenger-card/index.ts';
 import { MessengerChat } from '@/components/messenger/messenger-chat/index.ts';
-import { UIMessage } from '@/components/ui/ui-message';
+import { UIMessage } from '@/components/ui/ui-message/index.ts';
+import './messenger-page.scss';
 
 const template = `
   <section class="messenger-page">
