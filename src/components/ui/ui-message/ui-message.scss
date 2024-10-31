@@ -5,7 +5,7 @@
   padding: 10px;
   position: relative;
 
-  &:before {
+  &::before {
     content: "";
     width: 0;
     height: 0;
@@ -20,7 +20,8 @@
 
   &_self {
     background-color: $main-light-color;
-    &:before {
+
+    &::before {
       border-right: 10px solid transparent;
       border-left: 10px solid $main-light-color;
       border-top: 10px solid $main-light-color;

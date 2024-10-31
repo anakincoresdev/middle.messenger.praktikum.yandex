@@ -5,7 +5,8 @@
   "rules": {
     "at-rule-no-unknown": null,
     "scss/at-rule-no-unknown": true,
-    "color-function-notation": null
+    "color-function-notation": null,
+    "selector-class-pattern": null
   },
   "ignoreFiles": [
     "dist/*"

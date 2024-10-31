@@ -1,11 +1,14 @@
 .messenger-page {
   display: flex;
+
   &__sidebar {
     width: 350px;
   }
+
   &__card {
     margin-bottom: 10px;
   }
+
   &__main {
     flex: 1;
   }
