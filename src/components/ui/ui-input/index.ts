@@ -1,16 +1,15 @@
 import { Component } from '@/core/component.ts';
-import { Props } from '@/core/types';
+import { Props } from '@/core/types/index.ts';
 import './ui-input.scss';
 
 const template = `
-  <div class="ui-input{{#if className}} {{className}}{{/if}}">
-    <input
-      class="ui-input__input"
-      type="{{ type }}"
-      name="{{ name }}"
-      value="{{ value }}"
-    >
-  </div>
+  <input
+    class="ui-input"
+    type="{{ type }}"
+    name="{{ name }}"
+    value="{{ value }}"
+    placeholder="{{ placeholder }}"
+  >
 `;
 
 export class UIInput extends Component {

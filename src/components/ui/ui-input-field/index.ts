@@ -1,6 +1,7 @@
 import { Component } from '@/core/component.ts';
 import './ui-input-field.scss';
-import { UIInput } from '@/components/ui-input/UIInput.ts';
+import { UIInput } from '@/components/ui/ui-input/index.ts';
+import { Props } from '@/core/types/index.ts';
 
 const template = `
   <label class="ui-input-field{{#if className}} {{className}}{{/if}}">
@@ -10,19 +11,21 @@ const template = `
 `;
 
 export class UIInputField extends Component {
-  constructor(props) {
+  constructor(props: Props) {
     super({
-      label: props.label,
+      ...props,
+      events: null,
       input: new UIInput({
         events: props.events,
         type: props.type,
         name: props.name,
         value: props.value,
+        placeholder: props.placeholder,
       }),
     });
   }
+
   render() {
-    console.log(2323232)
     return this.compile(template);
   }
 }

@@ -1,4 +1,3 @@
-import Handlebars from 'handlebars';
 import { render } from '@/utils/renderDOM.ts';
 import { ROUTES } from './pages.ts';
 import { Route, RouteNames } from './types.ts';
@@ -6,14 +5,9 @@ import { Route, RouteNames } from './types.ts';
 const byRouteName = (routeName: string) => (route: Route) =>
   route.name === routeName;
 
-const get404PageView = () => {
-  const page404 = ROUTES.find(byRouteName(RouteNames.Error));
-
-  return page404!.component;
-};
-
 const mount = (page: Route) => {
-  render('#app', page.component());
+  const pageComponent = page.component();
+  render('#app', pageComponent);
 };
 
 export const navigateTo = (routeName: string) => {

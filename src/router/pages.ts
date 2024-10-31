@@ -10,6 +10,6 @@ export const ROUTES: Route[] = [
   { name: RouteNames.Login, component: () => new LoginPage() },
   { name: RouteNames.Profile, component: () => new ProfilePage() },
   { name: RouteNames.Messenger, component: () => new MessengerPage() },
-  // { name: RouteNames.Registration, component: RegistrationPage },
-  // { name: RouteNames.Error, component: ErrorPage },
+  { name: RouteNames.Registration, component: () => new RegistrationPage() },
+  { name: RouteNames.Error, component: () => new ErrorPage() },
 ];

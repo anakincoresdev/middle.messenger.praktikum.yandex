@@ -1,11 +1,13 @@
 .ui-avatar {
   border-radius: 50%;
   overflow: hidden;
-  height: 80px;
-  width: 80px;
+  height: 50px;
+  width: 50px;
+  min-width: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 2px solid $main-color;
   & > img {
     width: 100%;
   }

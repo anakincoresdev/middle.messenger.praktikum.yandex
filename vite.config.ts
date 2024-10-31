@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
@@ -10,8 +10,8 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "@/styles/variables.scss";`
-      }
-    }
+        additionalData: '@import "@/styles/variables.scss";',
+      },
+    },
   },
 });

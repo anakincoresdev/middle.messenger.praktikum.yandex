@@ -1,4 +1,4 @@
-export { UIButton } from './ui-button';
-export { UIAvatar } from './ui-avatar';
-export { UIInput } from './ui-input';
-export { UIInputField } from './ui-input-field';
+export { UIButton } from './ui/ui-button/index.ts';
+export { UIAvatar } from './ui/ui-avatar/index.ts';
+export { UIInput } from './ui/ui-input/index.ts';
+export { UIInputField } from './ui/ui-input-field/index.ts';

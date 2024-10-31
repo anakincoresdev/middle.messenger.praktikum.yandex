@@ -1,0 +1,25 @@
+.messenger-card {
+  width: 100%;
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  &__avatar {
+    margin-right: 20px;
+  }
+  &__info {
+    flex: 1;
+    overflow: hidden;
+  }
+  h4 {
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  p {
+    min-width: 0;
+    font-weight: 300;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}

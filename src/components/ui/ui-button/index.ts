@@ -1,9 +1,8 @@
 import { Component } from '@/core/component.ts';
-import { Props } from '@/core/types';
 import './ui-button.scss';
 
 const template = `
-  <button class="ui-button">
+  <button type="button" class="ui-button{{#if className}} {{className}}{{/if}}">
     {{ text }}
   </button>
 `;
