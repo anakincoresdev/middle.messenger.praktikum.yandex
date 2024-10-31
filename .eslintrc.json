@@ -29,6 +29,7 @@
     "max-len": [2, 120],
     "arrow-parens": "off",
     "import/no-extraneous-dependencies": "off",
+    "@typescript-eslint/ban-ts-comment": "error",
     "max-params": [2, 3],
     "implicit-arrow-linebreak": "off",
     "no-underscore-dangle": "off",
