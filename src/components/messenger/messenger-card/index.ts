@@ -1,5 +1,5 @@
 import { Component } from '@/core/component.ts';
-import { UIAvatar } from '@/components/index.ts';
+import { UIAvatar } from '@/components/ui/ui-avatar/index.ts';
 import { Props } from '@/core/types/index.ts';
 import './messenger-card.scss';
 

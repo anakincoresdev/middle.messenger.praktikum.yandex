@@ -1,8 +1,9 @@
 import { Component } from '@/core/component.ts';
 import { UIButton } from '@/components/ui/ui-button/index.ts';
-import { UIAvatar, UIInputField } from '@/components/index.ts';
-import './profile.scss';
+import { UIAvatar } from '@/components/ui/ui-avatar/index.ts';
+import { UIInputField } from '@/components/ui/ui-input-field/index.ts';
 import { useValidator } from '@/utils/validator.ts';
+import './profile.scss';
 
 const template = `
   <main class="profile-page">
