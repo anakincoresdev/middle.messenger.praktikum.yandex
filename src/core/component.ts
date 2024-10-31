@@ -96,7 +96,7 @@ export class Component {
       },
       set: (target: Props, prop: keyof Props, value: any) => {
         if (target[prop] !== value) {
-          // eslint-disable-next-line no-param-reassign
+          /* eslint-disable-next-line no-param-reassign */
           target[prop] = value;
           this._isUpdate = true;
         }

@@ -21,7 +21,7 @@
     "jasmine": true
   },
   "rules": {
-    "no-shadow": "off", // replaced by ts-eslint rule below
+    "no-shadow": "off",
     "@typescript-eslint/no-shadow": "error",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "error",
@@ -29,7 +29,6 @@
     "max-len": [2, 120],
     "arrow-parens": "off",
     "import/no-extraneous-dependencies": "off",
-    "@typescript-eslint/ban-ts-comment": "error",
     "max-params": [2, 3],
     "implicit-arrow-linebreak": "off",
     "no-underscore-dangle": "off",

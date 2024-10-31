@@ -5,7 +5,7 @@ const enum METHODS {
   DELETE = 'DELETE',
 }
 
-// eslint-disable-next-line no-undef
+/* eslint-disable-next-line no-undef */
 type XMLHTTPBody = Record<string, unknown>;
 
 type Options = {
