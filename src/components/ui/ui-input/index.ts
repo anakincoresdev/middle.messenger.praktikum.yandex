@@ -14,6 +14,7 @@ const template = `
 
 export class UIInput extends Component {
   constructor(props: Props) {
+    console.log('input constructor');
     super({
       ...props,
       type: props.type || 'text',
@@ -21,6 +22,7 @@ export class UIInput extends Component {
   }
 
   render() {
+    console.log('input render');
     return this.compile(template);
   }
 }

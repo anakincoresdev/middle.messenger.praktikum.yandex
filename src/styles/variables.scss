@@ -6,6 +6,7 @@ $form-width: 400px;
 $main-color: #F8CB60;
 $main-light-color: color.scale($main-color, $lightness: 50%);
 $second-color: #212228;
+$error-color: #e82838;
 
 @mixin form-title {
   font-size: 26px;

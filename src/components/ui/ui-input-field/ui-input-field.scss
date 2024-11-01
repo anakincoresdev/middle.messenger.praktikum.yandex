@@ -7,4 +7,10 @@
     font-size: 14px;
     color: rgba(lightgray, .8);
   }
+
+  &__error {
+    color: $error-color;
+    font-size: 13px;
+    margin-top: 6px;
+  }
 }
