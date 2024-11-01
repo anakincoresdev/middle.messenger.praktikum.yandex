@@ -70,6 +70,7 @@ export class Component {
     }
 
     this._isUpdate = false;
+    const oldProps = { ...this.props };
 
     const { children, props, lists } = this._separateProps(nextProps);
 
@@ -78,7 +79,7 @@ export class Component {
     Object.assign(this.props, props);
 
     if (this._isUpdate) {
-      this.eventBus().emit(Component.EVENTS.FLOW_CDU);
+      this.eventBus().emit(Component.EVENTS.FLOW_CDU, oldProps, this.props);
       this._isUpdate = false;
     }
   };
@@ -153,6 +154,7 @@ export class Component {
 
     Object.values(this._children).forEach((child) => {
       const stub = fragment.content.querySelector(`[data-id="${child._id}"]`);
+
       if (stub) {
         stub.replaceWith(child.getContent());
       }
@@ -207,15 +209,19 @@ export class Component {
 
   componentDidMount(): void {}
 
-  componentDidUpdate(): void {}
+  componentDidUpdate(oldProps: Props, nextProps: Props): boolean {
+    return true;
+  }
 
   dispatchComponentDidMount() {
     this.eventBus().emit(Component.EVENTS.FLOW_CDM);
   }
 
-  _componentDidUpdate() {
-    this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
-    this.componentDidUpdate();
+  _componentDidUpdate(oldProps, nextProps) {
+    const isReRender = this.componentDidUpdate(oldProps, nextProps);
+    if (isReRender) {
+      this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
+    }
   }
 
   render(): HTMLElement {

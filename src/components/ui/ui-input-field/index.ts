@@ -7,14 +7,18 @@ const template = `
   <label class="ui-input-field{{#if className}} {{className}}{{/if}}">
     <div class="ui-input-field__label">{{ label }}</div>
     {{{ input }}}
+    <div class="ui-input-field__error">
+      {{ errorText }}
+    </div>
   </label>
 `;
 
 export class UIInputField extends Component {
   constructor(props: Props) {
+    console.log('field constructor');
     super({
-      ...props,
-      events: null,
+      label: props.label,
+      errorText: props.errorText,
       input: new UIInput({
         events: props.events,
         type: props.type,

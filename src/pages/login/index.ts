@@ -30,10 +30,17 @@ const loginInput = new UIInputField({
   events: {
     input: (evt: InputEvent) => {
       form.login = (evt.target as HTMLInputElement).value;
+      console.log(123);
+      // loginInput.setProps({ placeholder: '123' });
     },
-    blur: () => {
+    blur() {
+      // loginInput.setProps({ placeholder: '123' });
       if (!validateLogin(form.login)) {
-        console.log('Некорректный логин');
+        loginInput.setProps({ label: 'Некорректный логин' });
+        // console.log('Некорректный логин', loginInput);
+      } else {
+        // console.log(22222);
+        // loginInput.setProps({ errorText: '', value: form.login });
       }
     },
   },

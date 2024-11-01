@@ -1,3 +1,5 @@
+import { Props } from '@/core/types/index.ts';
+
 type EmitProps = any | undefined;
 type Callback = (args: EmitProps) => void;
 type Listeners = Record<string, Array<Callback>>;
@@ -15,7 +17,7 @@ export class EventBus {
     this.listeners = {};
   }
 
-  on(eventName: string, callback: () => void) {
+  on(eventName: string, callback: (() => void) | ((oldProps: Props, newProps: Props) => void)) {
     if (!this.listeners[eventName]) {
       this.listeners[eventName] = [];
     }
@@ -31,11 +33,11 @@ export class EventBus {
     );
   }
 
-  emit(eventName: string, props?: EmitProps) {
+  emit(eventName: string, ...props) {
     throwErrorIfEventNotListened(this.listeners, eventName);
 
     this.listeners[eventName].forEach((listener) => {
-      listener(props);
+      listener(...props);
     });
   }
 }
