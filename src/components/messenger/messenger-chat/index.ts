@@ -31,7 +31,9 @@ const validationRules = {
 };
 
 const input = new UIInput({
-  className: 'messenger-chat__input',
+  attr: {
+    class: 'ui-input messenger-chat__input',
+  },
   name: 'message',
   placeholder: 'Введите сообщение',
   events: {

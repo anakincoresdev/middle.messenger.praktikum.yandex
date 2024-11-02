@@ -13,7 +13,7 @@ export class Component {
 
   readonly eventBus: () => EventBus;
 
-  private _element: Node | null = null;
+  private _element: Node;
 
   private readonly _id: string;
 
@@ -27,13 +27,17 @@ export class Component {
 
   _lists;
 
-  constructor(propsAndChildren: Props) {
+  tag: string;
+
+  constructor(propsAndChildren: Props, tag: string = 'div') {
     const { children, props, lists } = this._separateProps(propsAndChildren);
 
     const eventBus = new EventBus();
     this.eventBus = () => eventBus;
 
     this._props = props;
+
+    this.tag = tag;
 
     this._id = makeUUID();
 
@@ -124,6 +128,18 @@ export class Component {
     });
   }
 
+  private _addAttributes() {
+    const attr = this.props.attr as Record<string, string>;
+
+    if (!attr) {
+      return;
+    }
+
+    Object.entries(attr).forEach(([key, value]) => {
+      (this._element as HTMLElement).setAttribute(key, value);
+    });
+  }
+
   private _removeEvents() {
     const events = this.props.events as Events;
 
@@ -185,10 +201,11 @@ export class Component {
       stub.replaceWith(listFragment.content);
     });
 
-    return fragment.content.firstElementChild as HTMLElement;
+    return fragment.content;
   }
 
   init() {
+    this._element = document.createElement(this.tag);
     this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
   }
 
@@ -209,7 +226,8 @@ export class Component {
 
   componentDidMount(): void {}
 
-  componentDidUpdate(oldProps: Props, nextProps: Props): boolean {
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  componentDidUpdate(oldProps?: Props, nextProps?: Props): boolean {
     return true;
   }
 
@@ -224,8 +242,8 @@ export class Component {
     }
   }
 
-  render(): HTMLElement {
-    return document.createDocumentFragment().firstElementChild as HTMLElement;
+  render(): DocumentFragment {
+    return document.createDocumentFragment();
   }
 
   _render() {
@@ -233,12 +251,24 @@ export class Component {
 
     this._removeEvents();
 
-    if (this._element) {
-      (this._element as HTMLElement).innerHTML = component.innerHTML;
-    } else {
-      this._element = component;
-    }
+    /* const elementChildNodes = this._element.childNodes;
 
+    let oldNode;
+
+    elementChildNodes.forEach((node) => {
+      if (node.nodeType !== 3) {
+        oldNode = node;
+      }
+    });
+
+    if (oldNode) {
+      this._element.removeChild(oldNode);
+    } */
+
+    (this._element as HTMLElement).innerHTML = '';
+    this._element.appendChild(component);
+
+    this._addAttributes();
     this._addEvents();
   }
 

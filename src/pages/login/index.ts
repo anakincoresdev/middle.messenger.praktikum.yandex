@@ -25,22 +25,19 @@ const { validatePassword, validateLogin, validateForm } = useValidator();
 const loginInput = new UIInputField({
   label: 'Логин',
   name: 'login',
-  className: 'login-page__field',
+  attr: {
+    class: 'ui-input-field login-page__field',
+  },
   value: form.login,
   events: {
     input: (evt: InputEvent) => {
       form.login = (evt.target as HTMLInputElement).value;
-      console.log(123);
-      // loginInput.setProps({ placeholder: '123' });
     },
-    blur() {
-      // loginInput.setProps({ placeholder: '123' });
+    focusout() {
       if (!validateLogin(form.login)) {
-        loginInput.setProps({ label: 'Некорректный логин' });
-        // console.log('Некорректный логин', loginInput);
+        loginInput.setProps({ errorText: 'Некорректный логин' });
       } else {
-        // console.log(22222);
-        // loginInput.setProps({ errorText: '', value: form.login });
+        loginInput.setProps({ errorText: '' });
       }
     },
   },
@@ -49,7 +46,9 @@ const loginInput = new UIInputField({
 const passwordInput = new UIInputField({
   label: 'Пароль',
   name: 'password',
-  className: 'login-page__field',
+  attr: {
+    class: 'ui-input-field login-page__field',
+  },
   events: {
     input: (evt: InputEvent) => {
       form.password = (evt.target as HTMLInputElement).value;

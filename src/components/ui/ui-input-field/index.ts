@@ -4,22 +4,23 @@ import { UIInput } from '@/components/ui/ui-input/index.ts';
 import { Props } from '@/core/types/index.ts';
 
 const template = `
-  <label class="ui-input-field{{#if className}} {{className}}{{/if}}">
-    <div class="ui-input-field__label">{{ label }}</div>
-    {{{ input }}}
-    <div class="ui-input-field__error">
-      {{ errorText }}
-    </div>
-  </label>
+  <div class="ui-input-field__label">{{ label }}</div>
+  {{{ input }}}
+  <div class="ui-input-field__error">
+    {{ errorText }}
+  </div>
 `;
 
 export class UIInputField extends Component {
   constructor(props: Props) {
-    console.log('field constructor');
     super({
       label: props.label,
       errorText: props.errorText,
+      attr: props.attr,
       input: new UIInput({
+        attr: {
+          class: 'ui-input',
+        },
         events: props.events,
         type: props.type,
         name: props.name,
