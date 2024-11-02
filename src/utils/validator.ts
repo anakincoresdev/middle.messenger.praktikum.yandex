@@ -1,4 +1,6 @@
 /* eslint-disable-next-line max-len */
+import { Component } from '@/core/component.ts';
+
 const emailRegExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 type ValidationRules = Record<string, (value: string) => boolean>;
@@ -39,18 +41,26 @@ export function useValidator() {
   const checkFieldValidation = ({
     validationRules,
     errors,
-    fieldName,
+    field,
     form,
   }: {
     validationRules: ValidationRules,
     errors: Errors,
-    fieldName: string,
+    field: Component,
     form: Form,
-  }) => () => {
-    const validator = validationRules[fieldName];
+  }) => {
+    const { name } = field.props;
 
-    if (validator && !validator(form[fieldName])) {
-      console.log(errors[fieldName]);
+    if (!name) {
+      throw new Error('Error: The field must have a name');
+    }
+
+    const validator = validationRules[name];
+
+    if (validator && !validator(form[name])) {
+      field.setProps({ errorText: errors[name] });
+    } else if (field.props.errorText) {
+      field.setProps({ errorText: '' });
     }
   };
 

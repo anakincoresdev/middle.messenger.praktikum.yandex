@@ -17,6 +17,7 @@ export class UIInputField extends Component {
       label: props.label,
       errorText: props.errorText,
       attr: props.attr,
+      name: props.name,
       input: new UIInput({
         attr: {
           class: 'ui-input',
@@ -27,7 +28,7 @@ export class UIInputField extends Component {
         value: props.value,
         placeholder: props.placeholder,
       }),
-    });
+    }, 'label');
   }
 
   render() {

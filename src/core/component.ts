@@ -41,6 +41,8 @@ export class Component {
 
     this._id = makeUUID();
 
+    this._element = document.createElement(this.tag);
+
     this.props = this._makePropsProxy({ ...props, __id: this._id });
     this._children = this._makePropsProxy(children);
     this._lists = this._makePropsProxy(lists);
@@ -205,7 +207,6 @@ export class Component {
   }
 
   init() {
-    this._element = document.createElement(this.tag);
     this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
   }
 
@@ -226,8 +227,8 @@ export class Component {
 
   componentDidMount(): void {}
 
-  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-  componentDidUpdate(oldProps?: Props, nextProps?: Props): boolean {
+  componentDidUpdate([oldProps, nextProps]: Props[]): boolean {
+    console.log(oldProps, nextProps);
     return true;
   }
 
@@ -235,8 +236,8 @@ export class Component {
     this.eventBus().emit(Component.EVENTS.FLOW_CDM);
   }
 
-  _componentDidUpdate(oldProps, nextProps) {
-    const isReRender = this.componentDidUpdate(oldProps, nextProps);
+  _componentDidUpdate([oldProps, nextProps]: Props[]) {
+    const isReRender = this.componentDidUpdate([oldProps, nextProps]);
     if (isReRender) {
       this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
     }
@@ -250,20 +251,6 @@ export class Component {
     const component = this.render();
 
     this._removeEvents();
-
-    /* const elementChildNodes = this._element.childNodes;
-
-    let oldNode;
-
-    elementChildNodes.forEach((node) => {
-      if (node.nodeType !== 3) {
-        oldNode = node;
-      }
-    });
-
-    if (oldNode) {
-      this._element.removeChild(oldNode);
-    } */
 
     (this._element as HTMLElement).innerHTML = '';
     this._element.appendChild(component);

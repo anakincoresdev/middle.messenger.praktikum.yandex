@@ -5,14 +5,12 @@ import { useValidator } from '@/utils/validator.ts';
 import './login.scss';
 
 const template = `
-  <main class="login-page">
-    <form class="login-page__form">
-      <h1>Авторизация</h1>
-      {{{ loginInput }}}
-      {{{ passwordInput }}}
-      {{{ button }}}
-    </form>
-  </main>
+  <form class="login-page__form">
+    <h1>Авторизация</h1>
+    {{{ loginInput }}}
+    {{{ passwordInput }}}
+    {{{ button }}}
+  </form>
 `;
 
 const form = {
@@ -20,7 +18,24 @@ const form = {
   password: '',
 };
 
-const { validatePassword, validateLogin, validateForm } = useValidator();
+const { validatePassword, validateLogin } = useValidator();
+
+const validationRules = {
+  login: validateLogin,
+  password: validatePassword,
+};
+
+const checkValidation = (input: Component) => {
+  const name = input.props.name as 'login' | 'password';
+
+  if (!validationRules[name](form[name])) {
+    input.setProps({ errorText: 'Поле заполнено некорректно' });
+    return false;
+  }
+
+  input.setProps({ errorText: '' });
+  return true;
+};
 
 const loginInput = new UIInputField({
   label: 'Логин',
@@ -34,11 +49,7 @@ const loginInput = new UIInputField({
       form.login = (evt.target as HTMLInputElement).value;
     },
     focusout() {
-      if (!validateLogin(form.login)) {
-        loginInput.setProps({ errorText: 'Некорректный логин' });
-      } else {
-        loginInput.setProps({ errorText: '' });
-      }
+      checkValidation(loginInput);
     },
   },
 });
@@ -53,25 +64,21 @@ const passwordInput = new UIInputField({
     input: (evt: InputEvent) => {
       form.password = (evt.target as HTMLInputElement).value;
     },
-    blur: () => {
-      if (!validatePassword(form.password)) {
-        console.log('Некорректный пароль');
-      }
+    focusout: () => {
+      checkValidation(passwordInput);
     },
   },
 });
-
-const validationRules = {
-  login: validateLogin,
-  password: validatePassword,
-};
 
 const button = new UIButton({
   text: 'Войти',
   className: 'login-page__button',
   events: {
     click: () => {
-      if (!validateForm(validationRules, form)) {
+      const isLoginCorrect = checkValidation(loginInput);
+      const isPasswordCorrect = checkValidation(passwordInput);
+
+      if (!isLoginCorrect || !isPasswordCorrect) {
         console.log('Форма заполнена не корректно');
         return;
       }
@@ -83,11 +90,14 @@ const button = new UIButton({
 export class LoginPage extends Component {
   constructor() {
     super({
+      attr: {
+        class: 'login-page',
+      },
       button,
       loginInput,
       passwordInput,
       pageTitle: 'Логин',
-    });
+    }, 'main');
   }
 
   render() {

@@ -17,7 +17,7 @@ export class EventBus {
     this.listeners = {};
   }
 
-  on(eventName: string, callback: (() => void) | ((oldProps: Props, newProps: Props) => void)) {
+  on(eventName: string, callback: (() => void) | ((props: Props[]) => void)) {
     if (!this.listeners[eventName]) {
       this.listeners[eventName] = [];
     }
@@ -33,11 +33,11 @@ export class EventBus {
     );
   }
 
-  emit(eventName: string, ...props) {
+  emit(eventName: string, ...props: Props[]) {
     throwErrorIfEventNotListened(this.listeners, eventName);
 
     this.listeners[eventName].forEach((listener) => {
-      listener(...props);
+      listener(props);
     });
   }
 }

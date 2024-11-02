@@ -67,30 +67,6 @@ const errors = {
   message: 'Сообщение не должно быть пустым',
 };
 
-const getFieldEvents = (fieldName: string) => ({
-  input: setFieldValue(fieldName),
-  blur: checkFieldValidation({
-    validationRules,
-    form,
-    fieldName,
-    errors,
-  }),
-});
-
-const submitButton = new UIButton({
-  text: 'Сохранить изменения',
-  className: 'profile-page__button',
-  events: {
-    click() {
-      if (!validateForm(validationRules, form)) {
-        console.log('Форма заполнена не корректно');
-        return;
-      }
-      console.log(form);
-    },
-  },
-});
-
 const changeAvatarButton = new UIButton({
   text: 'Сменить аватар',
 });
@@ -99,38 +75,142 @@ const avatar = new UIAvatar({
   className: 'profile-page__user-avatar',
 });
 
+const nameInput = new UIInputField({
+  name: 'first_name',
+  label: 'Имя',
+  events: {
+    input: setFieldValue('first_name'),
+    focusout() {
+      checkFieldValidation({
+        validationRules,
+        errors,
+        field: nameInput,
+        form,
+      });
+    },
+  },
+});
+
+const secondNameInput = new UIInputField({
+  name: 'second_name',
+  label: 'Фамилия',
+  events: {
+    input: setFieldValue('second_name'),
+    focusout() {
+      checkFieldValidation({
+        validationRules,
+        errors,
+        field: secondNameInput,
+        form,
+      });
+    },
+  },
+});
+
+const phoneInput = new UIInputField({
+  name: 'phone',
+  label: 'Телефон',
+  events: {
+    input: setFieldValue('phone'),
+    focusout() {
+      checkFieldValidation({
+        validationRules,
+        errors,
+        field: phoneInput,
+        form,
+      });
+    },
+  },
+});
+
+const emailInput = new UIInputField({
+  name: 'email',
+  label: 'Email',
+  events: {
+    input: setFieldValue('email'),
+    focusout() {
+      checkFieldValidation({
+        validationRules,
+        errors,
+        field: emailInput,
+        form,
+      });
+    },
+  },
+});
+
+const loginInput = new UIInputField({
+  name: 'login',
+  label: 'Логин',
+  events: {
+    input: setFieldValue('login'),
+    focusout() {
+      checkFieldValidation({
+        validationRules,
+        errors,
+        field: loginInput,
+        form,
+      });
+    },
+  },
+});
+
+const passwordInput = new UIInputField({
+  name: 'password',
+  label: 'Пароль',
+  events: {
+    input: setFieldValue('password'),
+    focusout() {
+      checkFieldValidation({
+        validationRules,
+        errors,
+        field: passwordInput,
+        form,
+      });
+    },
+  },
+});
+
+const displayNameInput = new UIInputField({
+  name: 'display_name',
+  label: 'Отображаемое имя',
+  events: {
+    input: setFieldValue('display_name'),
+    focusout() {
+      checkFieldValidation({
+        validationRules,
+        errors,
+        field: displayNameInput,
+        form,
+      });
+    },
+  },
+});
+
 const formFields = [
-  new UIInputField({
-    name: 'first_name',
-    label: 'Имя',
-    events: getFieldEvents('first_name'),
-  }),
-  new UIInputField({
-    name: 'second_name',
-    label: 'Фамилия',
-    events: getFieldEvents('second_name'),
-  }),
-  new UIInputField({
-    name: 'phone',
-    label: 'Телефон',
-    events: getFieldEvents('phone'),
-  }),
-  new UIInputField({
-    name: 'email',
-    label: 'Email',
-    events: getFieldEvents('email'),
-  }),
-  new UIInputField({
-    name: 'login',
-    label: 'Логин',
-    events: getFieldEvents('login'),
-  }),
-  new UIInputField({
-    name: 'display_name',
-    label: 'Отображаемое имя',
-    events: getFieldEvents('display_name'),
-  }),
+  nameInput,
+  secondNameInput,
+  phoneInput,
+  emailInput,
+  loginInput,
+  displayNameInput,
 ];
+
+const submitButton = new UIButton({
+  text: 'Сохранить изменения',
+  className: 'profile-page__button',
+  events: {
+    click() {
+      if (!validateForm(validationRules, form)) {
+        formFields.forEach((input) => {
+          input._children.input.props.events.focusout();
+        });
+        return;
+      }
+      console.log(form);
+    },
+  },
+});
 
 export class ProfilePage extends Component {
   constructor() {
