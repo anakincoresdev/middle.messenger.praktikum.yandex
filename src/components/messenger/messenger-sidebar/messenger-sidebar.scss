@@ -1,0 +1,11 @@
+.messenger-sidebar {
+  width: 100%;
+  border-right: 1px solid $main-color;
+  height: 100vh;
+  padding: 0 20px;
+
+  &__head {
+    padding: 10px 0;
+    margin-bottom: 10px;
+  }
+}

@@ -1,15 +1,15 @@
-// sizes
+@use "sass:color";
+
 $main-border-radius: 6px;
 $input-height: 38px;
 $form-width: 400px;
-
-// colors
 $main-color: #F8CB60;
+$main-light-color: color.scale($main-color, $lightness: 50%);
 $second-color: #212228;
+$error-color: #e82838;
 
-// mixins
 @mixin form-title {
-  font-size: 30px;
+  font-size: 26px;
   margin-bottom: 20px;
   font-weight: 600;
 }

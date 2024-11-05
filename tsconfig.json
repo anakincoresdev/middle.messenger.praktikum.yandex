@@ -9,21 +9,19 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-
-    /* Bundler mode */
+    "types": ["vite/client", "node"],
     "moduleResolution": "node",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-
-    /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "strictNullChecks": true
   },
-  "include": [
-    "src",
-  ],
+  "include": ["src/**/*.ts", "src/**/*.d.ts"]
 }

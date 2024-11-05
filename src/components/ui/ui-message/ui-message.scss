@@ -1,0 +1,32 @@
+.ui-message {
+  border-radius: 10px;
+  background-color: white;
+  color: black;
+  padding: 10px;
+  position: relative;
+
+  &::before {
+    content: "";
+    width: 0;
+    height: 0;
+    position: absolute;
+    border-left: 10px solid transparent;
+    border-right: 10px solid #fff;
+    border-top: 10px solid #fff;
+    border-bottom: 10px solid transparent;
+    left: -10px;
+    top: 0;
+  }
+
+  &_self {
+    background-color: $main-light-color;
+
+    &::before {
+      border-right: 10px solid transparent;
+      border-left: 10px solid $main-light-color;
+      border-top: 10px solid $main-light-color;
+      left: auto;
+      right: -10px;
+    }
+  }
+}
