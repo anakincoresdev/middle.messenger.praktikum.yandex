@@ -5,6 +5,8 @@ import { MessengerCard } from '@/components/messenger/messenger-card/index.ts';
 import { MessengerChat } from '@/components/messenger/messenger-chat/index.ts';
 import { UIMessage } from '@/components/ui/ui-message/index.ts';
 import './messenger-page.scss';
+import { useUser } from '@/utils/user.ts';
+import { router } from '@/router/Router.ts';
 
 const template = `
   <section class="messenger-page">
@@ -71,5 +73,14 @@ export class MessengerPage extends Component {
 
   render() {
     return this.compile(template);
+  }
+
+  async componentDidMount() {
+    const { getUser } = useUser();
+    const user = await getUser();
+
+    if (!user) {
+      router.go('/');
+    }
   }
 }

@@ -34,4 +34,11 @@ export class UIInputField extends Component {
   render() {
     return this.compile(template);
   }
+
+  componentDidUpdate([oldProps, nextProps]: Props[]): boolean {
+    if (oldProps.value !== nextProps.value) {
+      this._children.input.setProps({ value: nextProps.value });
+    }
+    return super.componentDidUpdate([oldProps, nextProps]);
+  }
 }

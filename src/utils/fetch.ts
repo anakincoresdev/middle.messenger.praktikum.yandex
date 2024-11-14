@@ -27,25 +27,34 @@ function queryStringify(data: XMLHTTPBody) {
   );
 }
 
-export class HTTPTransport {
+class HTTPTransport {
+  baseURL: string;
+
+  constructor({ baseURL }) {
+    this.baseURL = baseURL;
+  }
+
   get = (url: string, options: Options) =>
-    this.request(url, { ...options, method: METHODS.GET });
+    this.request(this.baseURL + url, { ...options, method: METHODS.GET });
 
   post = (url: string, options: Options) =>
-    this.request(url, { ...options, method: METHODS.POST });
+    this.request(this.baseURL + url, { ...options, method: METHODS.POST });
 
   put = (url: string, options: Options) =>
-    this.request(url, { ...options, method: METHODS.PUT });
+    this.request(this.baseURL + url, { ...options, method: METHODS.PUT });
 
   delete = (url: string, options: Options) =>
-    this.request(url, { ...options, method: METHODS.DELETE });
+    this.request(this.baseURL + url, { ...options, method: METHODS.DELETE });
 
-  request = (url: string, options: {
-    headers: Record<string, string>,
-    method: METHODS,
-    data?: XMLHTTPBody,
-    timeout?: number,
-  }) => {
+  request = (
+    url: string,
+    options: {
+      headers: Record<string, string>;
+      method: METHODS;
+      data?: XMLHTTPBody;
+      timeout?: number;
+    },
+  ) => {
     const {
       headers,
       method,
@@ -77,6 +86,7 @@ export class HTTPTransport {
 
       xhr.timeout = timeout || 5000;
       xhr.ontimeout = reject;
+      xhr.withCredentials = true;
 
       if (isGet || !data) {
         xhr.send();
@@ -86,3 +96,5 @@ export class HTTPTransport {
     });
   };
 }
+
+export const fetchAPI = new HTTPTransport({ baseURL: 'https://ya-praktikum.tech/api/v2' });

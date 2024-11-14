@@ -1,39 +1,16 @@
-import { render } from '@/utils/renderDOM.ts';
-import { ROUTES } from './pages.ts';
-import { Route, RouteNames } from './types.ts';
+import { router } from '@/router/Router.ts';
+import { LoginPage } from '@/pages/login/index.ts';
+import { RegistrationPage } from '@/pages/registration/index.ts';
+import { MessengerPage } from '@/pages/messenger/index.ts';
+import { ProfilePage } from '@/pages/profile/index.ts';
+import { ErrorPage } from '@/pages/error/index.ts';
 
-const byRouteName = (routeName: string) => (route: Route) =>
-  route.name === routeName;
-
-const mount = (page: Route) => {
-  const pageComponent = page.component();
-  render('#app', pageComponent);
+export default () => {
+  router
+    .use('/', LoginPage)
+    .use('/sign-up', RegistrationPage)
+    .use('/messenger', MessengerPage)
+    .use('/settings', ProfilePage)
+    .use('/error', ErrorPage)
+    .start();
 };
-
-export const navigateTo = (routeName: string) => {
-  const page = ROUTES.find(byRouteName(routeName));
-
-  if (!page) {
-    throw new Error('Error: This page does not exist');
-  }
-
-  mount(page);
-};
-
-document.addEventListener('click', (e) => {
-  const target = e.target as HTMLElement;
-  const routeName = target.getAttribute('page');
-  if (routeName) {
-    navigateTo(routeName);
-
-    e.preventDefault();
-    e.stopImmediatePropagation();
-  }
-});
-
-export default function initRouter() {
-  const { pathname } = window.location;
-  const routeName = pathname.replace('/', '');
-
-  navigateTo(routeName || RouteNames.Login);
-}

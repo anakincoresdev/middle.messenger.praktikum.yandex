@@ -2,13 +2,16 @@ import { Component } from '@/core/component.ts';
 import { UIInput } from '@/components/ui/ui-input/index.ts';
 import { UIButton } from '@/components/ui/ui-button/index.ts';
 import { useValidator } from '@/utils/validator.ts';
-import './messenger-chat.scss';
 import { Props } from '@/core/types/index.ts';
+import { UILink } from '@/components/ui/ui-link/index.ts';
+import { router } from '@/router/Router.ts';
+import './messenger-chat.scss';
 
 const template = `
   <div class="messenger-chat">
     <div class="messenger-chat__head">
       Сообщения ({{ messagesCount }})
+      {{{ profileSettingsLink }}}
     </div>
     <div class="messenger-chat__messages">
       {{{ items }}}
@@ -57,12 +60,22 @@ const button = new UIButton({
   },
 });
 
+const profileSettingsLink = new UILink({
+  text: 'Настройки профиля',
+  events: {
+    click() {
+      router.go('/settings');
+    },
+  },
+});
+
 export class MessengerChat extends Component {
   constructor(props: Props) {
     super({
       ...props,
       input,
       button,
+      profileSettingsLink,
       messagesCount: props.items.length,
     });
   }

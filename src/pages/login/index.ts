@@ -3,6 +3,10 @@ import { UIButton } from '@/components/ui/ui-button/index.ts';
 import { UIInputField } from '@/components/ui/ui-input-field/index.ts';
 import { useValidator } from '@/utils/validator.ts';
 import './login.scss';
+import { UILink } from '@/components/ui/ui-link/index.ts';
+import { router } from '@/router/Router.ts';
+import { fetchAPI } from '@/utils/fetch.ts';
+import { useUser } from '@/utils/user.ts';
 
 const template = `
   <form class="login-page__form">
@@ -10,6 +14,7 @@ const template = `
     {{{ loginInput }}}
     {{{ passwordInput }}}
     {{{ button }}}
+    {{{ signUpLink }}}
   </form>
 `;
 
@@ -74,7 +79,7 @@ const button = new UIButton({
   text: 'Войти',
   className: 'login-page__button',
   events: {
-    click: () => {
+    click: async () => {
       const isLoginCorrect = checkValidation(loginInput);
       const isPasswordCorrect = checkValidation(passwordInput);
 
@@ -82,7 +87,21 @@ const button = new UIButton({
         console.log('Форма заполнена не корректно');
         return;
       }
-      console.log(form);
+      const data = await fetchAPI.post('/auth/signin', { data: form, headers: { 'Content-Type': 'application/json' } });
+
+      if (data && data.status === 200) {
+        router.go('/messenger');
+      }
+    },
+  },
+});
+
+const signUpLink = new UILink({
+  text: 'Зарегистрироваться',
+  className: 'login-page__sign-up',
+  events: {
+    click() {
+      router.go('/sign-up');
     },
   },
 });
@@ -96,11 +115,21 @@ export class LoginPage extends Component {
       button,
       loginInput,
       passwordInput,
+      signUpLink,
       pageTitle: 'Логин',
     }, 'main');
   }
 
   render() {
     return this.compile(template);
+  }
+
+  async componentDidMount() {
+    const { getUser } = useUser();
+    const user = await getUser();
+
+    if (user) {
+      router.go('/messenger');
+    }
   }
 }
