@@ -7,7 +7,7 @@ import './profile.scss';
 import { UILink } from '@/components/ui/ui-link/index.ts';
 import { router } from '@/router/Router.ts';
 import { fetchAPI } from '@/utils/fetch.ts';
-import { useUser } from '@/utils/user.ts';
+import { useUser } from '@/models/user.ts';
 import { User } from '@/types/api/User.ts';
 
 const template = `
@@ -83,7 +83,7 @@ const logoutButton = new UIButton({
   text: 'Выйти',
   events: {
     click: async () => {
-      const data = await fetchAPI.post('/auth/logout', { headers: { 'Content-Type': 'application/json' } });
+      const data = await fetchAPI.post('/auth/logout');
 
       if (data && data.status === 200) {
         router.go('/');
@@ -218,7 +218,7 @@ const submitButton = new UIButton({
         });
         return;
       }
-      const data = await fetchAPI.put('/user/profile', { data: form, headers: { 'Content-Type': 'application/json' } });
+      const data = await fetchAPI.put('/user/profile', { data: form });
 
       if (data && data.status === 200) {
         router.go('/messenger');

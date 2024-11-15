@@ -5,7 +5,7 @@ const user = { data: null };
 
 export function useUser() {
   async function getUser(): Promise<User | null> {
-    const data = await fetchAPI.get('/auth/user', { headers: { 'Content-Type': 'application/json' } });
+    const data = await fetchAPI.get('/auth/user');
 
     if (data.status === 200 && data.response) {
       user.data = JSON.parse(data.response);

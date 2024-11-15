@@ -4,7 +4,7 @@ import './messenger-sidebar.scss';
 const template = `
   <div class="messenger-sidebar">
     <div class="messenger-sidebar__head">
-      {{{ input }}}
+      {{{ newChatInput }}} {{{ newChatButton }}}
     </div>
     {{{ items }}}
   </div> 

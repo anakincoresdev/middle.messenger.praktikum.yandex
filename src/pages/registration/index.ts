@@ -5,7 +5,7 @@ import { useValidator } from '@/utils/validator.ts';
 import { fetchAPI } from '@/utils/fetch.ts';
 import './registration.scss';
 import { router } from '@/router/Router.ts';
-import { useUser } from '@/utils/user.ts';
+import { useUser } from '@/models/user.ts';
 
 const template = `
   <form class="registration-page__form">
@@ -179,7 +179,7 @@ const button = new UIButton({
         return;
       }
 
-      const data = await fetchAPI.post('/auth/signup', { data: form, headers: { 'Content-Type': 'application/json' } });
+      const data = await fetchAPI.post('/auth/signup', { data: form });
 
       if (data && data.status === 200) {
         router.go('/');

@@ -9,7 +9,7 @@ const enum METHODS {
 type XMLHTTPBody = Record<string, unknown>;
 
 type Options = {
-  headers: Record<string, string>;
+  headers?: Record<string, string>;
   timeout?: number;
   data?: XMLHTTPBody;
 };
@@ -34,29 +34,29 @@ class HTTPTransport {
     this.baseURL = baseURL;
   }
 
-  get = (url: string, options: Options) =>
+  get = (url: string, options: Options = {}) =>
     this.request(this.baseURL + url, { ...options, method: METHODS.GET });
 
-  post = (url: string, options: Options) =>
+  post = (url: string, options: Options = {}) =>
     this.request(this.baseURL + url, { ...options, method: METHODS.POST });
 
-  put = (url: string, options: Options) =>
+  put = (url: string, options: Options = {}) =>
     this.request(this.baseURL + url, { ...options, method: METHODS.PUT });
 
-  delete = (url: string, options: Options) =>
+  delete = (url: string, options: Options = {}) =>
     this.request(this.baseURL + url, { ...options, method: METHODS.DELETE });
 
   request = (
     url: string,
     options: {
-      headers: Record<string, string>;
+      headers?: Record<string, string>;
       method: METHODS;
       data?: XMLHTTPBody;
       timeout?: number;
     },
   ) => {
     const {
-      headers,
+      headers = { 'Content-Type': 'application/json' },
       method,
       data,
       timeout,
@@ -97,4 +97,6 @@ class HTTPTransport {
   };
 }
 
-export const fetchAPI = new HTTPTransport({ baseURL: 'https://ya-praktikum.tech/api/v2' });
+export const fetchAPI = new HTTPTransport({
+  baseURL: 'https://ya-praktikum.tech/api/v2',
+});

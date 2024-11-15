@@ -6,7 +6,7 @@ import './login.scss';
 import { UILink } from '@/components/ui/ui-link/index.ts';
 import { router } from '@/router/Router.ts';
 import { fetchAPI } from '@/utils/fetch.ts';
-import { useUser } from '@/utils/user.ts';
+import { useUser } from '@/models/user.ts';
 
 const template = `
   <form class="login-page__form">
@@ -87,7 +87,7 @@ const button = new UIButton({
         console.log('Форма заполнена не корректно');
         return;
       }
-      const data = await fetchAPI.post('/auth/signin', { data: form, headers: { 'Content-Type': 'application/json' } });
+      const data = await fetchAPI.post('/auth/signin', { data: form });
 
       if (data && data.status === 200) {
         router.go('/messenger');
