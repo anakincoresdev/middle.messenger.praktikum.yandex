@@ -11,7 +11,7 @@ type XMLHTTPBody = Record<string, unknown>;
 type Options = {
   headers?: Record<string, string>;
   timeout?: number;
-  data?: XMLHTTPBody;
+  data?: XMLHTTPBody | FormData;
 };
 
 function queryStringify(data: XMLHTTPBody) {
@@ -30,7 +30,7 @@ function queryStringify(data: XMLHTTPBody) {
 class HTTPTransport {
   baseURL: string;
 
-  constructor({ baseURL }) {
+  constructor({ baseURL }: { baseURL: string }) {
     this.baseURL = baseURL;
   }
 
@@ -51,7 +51,7 @@ class HTTPTransport {
     options: {
       headers?: Record<string, string>;
       method: METHODS;
-      data?: XMLHTTPBody;
+      data?: XMLHTTPBody | FormData;
       timeout?: number;
     },
   ) => {
@@ -62,7 +62,7 @@ class HTTPTransport {
       timeout,
     } = options;
 
-    return new Promise((resolve, reject) => {
+    return new Promise<XMLHttpRequest>((resolve, reject) => {
       if (!method) {
         reject(new Error('No method'));
         return;
@@ -71,9 +71,9 @@ class HTTPTransport {
       const xhr = new XMLHttpRequest();
       const isGet = method === METHODS.GET;
 
-      xhr.open(method, isGet && data ? `${url}${queryStringify(data)}` : url);
-
       const isFormData = data instanceof FormData;
+
+      xhr.open(method, isGet && data && !isFormData ? `${url}${queryStringify(data)}` : url);
 
       if (!isFormData) {
         Object.keys(headers).forEach((key) => {

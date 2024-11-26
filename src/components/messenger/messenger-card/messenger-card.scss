@@ -1,6 +1,6 @@
 .messenger-card {
   width: 100%;
-  padding: 10px 0;
+  padding: 10px 0 10px 10px;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -12,11 +12,6 @@
 
   &:hover {
     background: $main-dark-color;
-  }
-
-  &__avatar {
-    margin-right: 20px;
-    margin-left: 10px;
   }
 
   &__info {

@@ -8,6 +8,7 @@ import { debounce } from '@/utils/common.ts';
 import { UIButton } from '@/components/ui/ui-button/index.ts';
 
 import './messenger-chat-new-participant-form.scss';
+import { ChatParticipant } from '@/types/api/Chat.ts';
 
 const template = `
   <form class="messenger-chat-new-participant-form">
@@ -36,7 +37,7 @@ export class MessengerChatNewParticipantForm extends Component {
           const data = await fetchAPI.post('/user/search', { data: { login } });
 
           if (data.status === 200) {
-            const participants = JSON.parse(data.response);
+            const participants = JSON.parse(data.response) as ChatParticipant[];
 
             const items = participants.map(
               (user) =>

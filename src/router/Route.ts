@@ -1,5 +1,6 @@
 import { ComponentClass } from '@/core/types/index.ts';
 import { render } from '@/utils/renderDOM.ts';
+import { Component } from '@/core/component.ts';
 
 type RouteProps = {
   rootQuery: string;
@@ -38,7 +39,7 @@ export class Route<T> {
 
   render() {
     this._component = new this._componentClass();
-    render(this._props.rootQuery, this._component);
+    render(this._props.rootQuery, this._component as Component);
 
     // this._component.show();
   }

@@ -1,12 +1,10 @@
 import { Component } from '@/core/component.ts';
-import { UIAvatar } from '@/components/ui/ui-avatar/index.ts';
 import { Props } from '@/core/types/index.ts';
 import { UILink } from '@/components/ui/ui-link/index.ts';
 import './messenger-card.scss';
 
 const template = `
   <article class="messenger-card{{#if isActive}} messenger-card_active{{/if}}">
-    {{{ avatar }}}
     <div class="messenger-card__info">
       <h4>{{ name }}</h4>
       <p>{{ message }}</p>
@@ -28,7 +26,6 @@ export class MessengerCard extends Component {
     });
     super({
       ...props,
-      avatar: new UIAvatar({ className: 'messenger-card__avatar' }),
       deleteLink,
     });
   }

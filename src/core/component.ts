@@ -15,7 +15,7 @@ export abstract class Component {
 
   private _element: Node;
 
-  private readonly _id: string;
+  readonly _id: string;
 
   props: Props;
 
@@ -264,13 +264,5 @@ export abstract class Component {
 
   getContent() {
     return this.element;
-  }
-
-  show() {
-    this.element.style.display = 'block';
-  }
-
-  hide() {
-    this.element.style.display = 'none';
   }
 }

@@ -7,6 +7,7 @@ import { useUser } from '@/models/user.ts';
 import { router } from '@/router/Router.ts';
 import { useChat } from '@/models/chat.ts';
 import './messenger-page.scss';
+import { Chat } from '@/types/api/Chat.ts';
 
 const template = `
   <section class="messenger-page">
@@ -35,12 +36,20 @@ const chat = new MessengerChat({
   isLoading: false,
 });
 
-function onChatCardClick(item) {
+function onChatCardClick(item: Chat) {
   return async () => {
+    if (!user.data?.id) {
+      return;
+    }
+
     chat.setProps({ isLoading: true });
     closeChat();
-    const socket = await openChat(item.id, user.data?.id);
+    const socket = await openChat(item.id, user.data.id);
     const participants = await getChatParticipants(item.id);
+
+    if (!socket) {
+      return;
+    }
 
     socket.addEventListener('message', (event) => {
       const data = JSON.parse(event.data);
@@ -52,8 +61,8 @@ function onChatCardClick(item) {
       if (Array.isArray(data)) {
         const messageComponents = data.map(
           (message) => {
-            const messageUser = participants.find((participant) => participant.id === message.user_id);
-            const messageUserName = `${messageUser.second_name} ${messageUser.first_name}`;
+            const messageUser = participants?.find((participant) => participant.id === message.user_id);
+            const messageUserName = `${messageUser?.second_name} ${messageUser?.first_name}`;
 
             return new UIMessage({
               author: messageUserName,
@@ -71,8 +80,8 @@ function onChatCardClick(item) {
         });
       } else {
         const messages = chat._lists.items.slice();
-        const messageUser = participants.find((participant) => participant.id === data.user_id);
-        const messageUserName = `${messageUser.second_name} ${messageUser.first_name}`;
+        const messageUser = participants?.find((participant) => participant.id === data.user_id);
+        const messageUserName = `${messageUser?.second_name} ${messageUser?.first_name}`;
 
         messages.unshift(
           new UIMessage({

@@ -3,6 +3,7 @@ import { UIButton } from '@/components/ui/ui-button/index.ts';
 import { UIModal } from '@/components/ui/ui-modal/index.ts';
 import { MessengerChatForm } from '@/components/messenger/messenger-chat-form/index.ts';
 import './messenger-sidebar.scss';
+import { Props } from '@/core/types';
 
 const template = `
   <div class="messenger-sidebar">
@@ -25,7 +26,7 @@ function toggleWindow(ctx: Component) {
 }
 
 export class MessengerSidebar extends Component {
-  constructor(props) {
+  constructor(props: Props) {
     const newChatModal = new UIModal({
       title: 'Добавить чат',
       content: new MessengerChatForm({
@@ -34,13 +35,17 @@ export class MessengerSidebar extends Component {
           toggleWindow(this);
         },
       }),
-      onClose: () => { toggleWindow(this); },
+      onClose: () => {
+        toggleWindow(this);
+      },
     });
 
     const expandButton = new UIButton({
       text: 'Добавить чат',
       events: {
-        click: () => { toggleWindow(this); },
+        click: () => {
+          toggleWindow(this);
+        },
       },
     });
 

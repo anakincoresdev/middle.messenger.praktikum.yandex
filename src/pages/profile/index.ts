@@ -35,7 +35,16 @@ const template = `
   </main>
 `;
 
-const form: User = {
+type Form = {
+  first_name: string,
+  second_name: string,
+  phone: string,
+  email: string,
+  login: string,
+  display_name: string,
+}
+
+const form: Form = {
   first_name: '',
   second_name: '',
   phone: '',
@@ -62,7 +71,7 @@ const validationRules = {
   phone: validatePhone,
 };
 
-const setFieldValue = (fieldName: string) => (evt: InputEvent) => {
+const setFieldValue = (fieldName: keyof Form) => (evt: InputEvent) => {
   form[fieldName] = (evt.target as HTMLInputElement).value;
 };
 

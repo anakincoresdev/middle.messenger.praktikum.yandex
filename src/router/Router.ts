@@ -2,9 +2,7 @@ import { Route } from '@/router/Route.ts';
 import { ComponentClass } from '@/core/types/index.ts';
 
 class Router<T> {
-  __instance;
-
-  routes;
+  routes: Route<T>[];
 
   history;
 
@@ -28,7 +26,7 @@ class Router<T> {
 
   start() {
     window.onpopstate = (event) => {
-      this._onRoute(event.currentTarget.location.pathname);
+      this._onRoute((event.currentTarget as Window).location.pathname);
     };
     this._onRoute(window.location.pathname);
   }
@@ -39,7 +37,7 @@ class Router<T> {
     }
   }
 
-  go(pathname) {
+  go(pathname: string) {
     this.history.pushState({}, '', pathname);
     this._onRoute(pathname);
   }
@@ -58,7 +56,7 @@ class Router<T> {
     route.navigate(pathname);
   }
 
-  getRoute(pathname) {
+  getRoute(pathname: string) {
     return this.routes.find((route) => route.match(pathname));
   }
 }

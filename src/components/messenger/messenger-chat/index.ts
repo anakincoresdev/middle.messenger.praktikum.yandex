@@ -15,6 +15,7 @@ import {
 import {
   MessengerChatNewParticipantForm,
 } from '@/components/messenger/messenger-chat-new-participant-form';
+import { ChatParticipant } from '@/types/api/Chat.ts';
 
 const template = `
   <div class="messenger-chat">
@@ -66,7 +67,7 @@ const validationRules = {
   message: validateMessage,
 };
 
-const chatParticipants = { items: [] };
+const chatParticipants: { items: ChatParticipant[] } = { items: [] };
 
 const participantsForm = new MessengerChatParticipants({
   id: 0,
@@ -171,7 +172,7 @@ export class MessengerChat extends Component {
     return this.compile(template);
   }
 
-  componentDidUpdate([oldProps, nextProps]) {
+  componentDidUpdate([oldProps, nextProps]: [Props, Props]) {
     getChatParticipants(this.props.currentChatId).then((data) => {
       if (data && data.length) {
         chatParticipants.items = data;

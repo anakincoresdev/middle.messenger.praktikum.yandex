@@ -1,8 +1,9 @@
 import { fetchAPI } from '@/utils/fetch.ts';
+import { Chat, ChatParticipant } from '@/types/api/Chat.ts';
 
 const chat: {
   socket: null | WebSocket;
-  pingInterval: ReturnType<typeof setInterval> | null;
+  pingInterval: ReturnType<typeof window.setInterval> | null;
   users: null,
 } = {
   socket: null,
@@ -15,7 +16,7 @@ export function useChat() {
     const data = await fetchAPI.get('/chats');
 
     if (data.status === 200) {
-      return JSON.parse(data.response);
+      return JSON.parse(data.response) as Chat[];
     }
 
     return null;
@@ -25,15 +26,15 @@ export function useChat() {
     return fetchAPI.post('/chats', { data: { title } });
   }
 
-  async function deleteChat(chatId: string) {
+  async function deleteChat(chatId: number) {
     return fetchAPI.delete('/chats', { data: { chatId } });
   }
 
-  async function openChat(chatId: number, userId: number): Promise<WebSocket> {
+  async function openChat(chatId: number, userId: number): Promise<WebSocket | null> {
     const tokenResponse = await fetchAPI.post(`/chats/token/${chatId}`);
 
     if (tokenResponse.status !== 200) {
-      return;
+      return null;
     }
 
     const { token } = JSON.parse(tokenResponse.response);
@@ -65,10 +66,6 @@ export function useChat() {
       console.log(`Код: ${event.code} | Причина: ${event.reason}`);
     });
 
-    chat.socket.addEventListener('error', (event) => {
-      console.log('Ошибка', event.message);
-    });
-
     return chat.socket;
   }
 
@@ -78,7 +75,9 @@ export function useChat() {
     }
 
     chat.socket.close();
-    clearInterval(chat.pingInterval);
+    if (chat.pingInterval) {
+      window.clearInterval(chat.pingInterval);
+    }
     chat.socket = null;
     chat.pingInterval = null;
   }
@@ -87,7 +86,7 @@ export function useChat() {
     const data = await fetchAPI.get(`/chats/${id}/users`);
 
     if (data.status === 200) {
-      return JSON.parse(data.response);
+      return JSON.parse(data.response) as ChatParticipant[];
     }
 
     return null;

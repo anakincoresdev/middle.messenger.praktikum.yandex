@@ -12,10 +12,6 @@ const template = `
 `;
 
 export class UIFile extends Component {
-  constructor(props) {
-    super({ ...props });
-  }
-
   render() {
     return this.compile(template);
   }
