@@ -1,11 +1,17 @@
 .messenger-card {
   width: 100%;
-  padding: 10px 0;
+  padding: 10px 0 10px 10px;
   display: flex;
   align-items: center;
+  cursor: pointer;
+  border-radius: 2px;
 
-  &__avatar {
-    margin-right: 20px;
+  &_active {
+    background: $main-dark-color;
+  }
+
+  &:hover {
+    background: $main-dark-color;
   }
 
   &__info {
@@ -25,5 +31,14 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+  }
+
+  &__delete {
+    visibility: hidden;
+    margin-right: 10px;
+  }
+
+  &:hover &__delete {
+    visibility: visible;
   }
 }

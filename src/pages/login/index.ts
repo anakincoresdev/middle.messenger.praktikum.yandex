@@ -3,16 +3,19 @@ import { UIButton } from '@/components/ui/ui-button/index.ts';
 import { UIInputField } from '@/components/ui/ui-input-field/index.ts';
 import { useValidator } from '@/utils/validator.ts';
 import './login.scss';
+import { UILink } from '@/components/ui/ui-link/index.ts';
+import { router } from '@/router/Router.ts';
+import { fetchAPI } from '@/utils/fetch.ts';
+import { useUser } from '@/models/user.ts';
 
 const template = `
-  <main class="login-page">
-    <form class="login-page__form">
-      <h1>Авторизация</h1>
-      {{{ loginInput }}}
-      {{{ passwordInput }}}
-      {{{ button }}}
-    </form>
-  </main>
+  <form class="login-page__form">
+    <h1>Авторизация</h1>
+    {{{ loginInput }}}
+    {{{ passwordInput }}}
+    {{{ button }}}
+    {{{ signUpLink }}}
+  </form>
 `;
 
 const form = {
@@ -20,28 +23,38 @@ const form = {
   password: '',
 };
 
-const { validatePassword, validateLogin, validateForm } = useValidator();
+const { validatePassword, validateLogin } = useValidator();
+
+const validationRules = {
+  login: validateLogin,
+  password: validatePassword,
+};
+
+const checkValidation = (input: Component) => {
+  const name = input.props.name as 'login' | 'password';
+
+  if (!validationRules[name](form[name])) {
+    input.setProps({ errorText: 'Поле заполнено некорректно' });
+    return false;
+  }
+
+  input.setProps({ errorText: '' });
+  return true;
+};
 
 const loginInput = new UIInputField({
   label: 'Логин',
   name: 'login',
-  className: 'login-page__field',
+  attr: {
+    class: 'ui-input-field login-page__field',
+  },
   value: form.login,
   events: {
     input: (evt: InputEvent) => {
       form.login = (evt.target as HTMLInputElement).value;
-      console.log(123);
-      // loginInput.setProps({ placeholder: '123' });
     },
-    blur() {
-      // loginInput.setProps({ placeholder: '123' });
-      if (!validateLogin(form.login)) {
-        loginInput.setProps({ label: 'Некорректный логин' });
-        // console.log('Некорректный логин', loginInput);
-      } else {
-        // console.log(22222);
-        // loginInput.setProps({ errorText: '', value: form.login });
-      }
+    focusout() {
+      checkValidation(loginInput);
     },
   },
 });
@@ -49,34 +62,46 @@ const loginInput = new UIInputField({
 const passwordInput = new UIInputField({
   label: 'Пароль',
   name: 'password',
-  className: 'login-page__field',
+  attr: {
+    class: 'ui-input-field login-page__field',
+  },
   events: {
     input: (evt: InputEvent) => {
       form.password = (evt.target as HTMLInputElement).value;
     },
-    blur: () => {
-      if (!validatePassword(form.password)) {
-        console.log('Некорректный пароль');
-      }
+    focusout: () => {
+      checkValidation(passwordInput);
     },
   },
 });
-
-const validationRules = {
-  login: validateLogin,
-  password: validatePassword,
-};
 
 const button = new UIButton({
   text: 'Войти',
   className: 'login-page__button',
   events: {
-    click: () => {
-      if (!validateForm(validationRules, form)) {
+    click: async () => {
+      const isLoginCorrect = checkValidation(loginInput);
+      const isPasswordCorrect = checkValidation(passwordInput);
+
+      if (!isLoginCorrect || !isPasswordCorrect) {
         console.log('Форма заполнена не корректно');
         return;
       }
-      console.log(form);
+      const data = await fetchAPI.post('/auth/signin', { data: form });
+
+      if (data && data.status === 200) {
+        router.go('/messenger');
+      }
+    },
+  },
+});
+
+const signUpLink = new UILink({
+  text: 'Зарегистрироваться',
+  className: 'login-page__sign-up',
+  events: {
+    click() {
+      router.go('/sign-up');
     },
   },
 });
@@ -84,14 +109,27 @@ const button = new UIButton({
 export class LoginPage extends Component {
   constructor() {
     super({
+      attr: {
+        class: 'login-page',
+      },
       button,
       loginInput,
       passwordInput,
+      signUpLink,
       pageTitle: 'Логин',
-    });
+    }, 'main');
   }
 
   render() {
     return this.compile(template);
+  }
+
+  async componentDidMount() {
+    const { getUser } = useUser();
+    const user = await getUser();
+
+    if (user) {
+      router.go('/messenger');
+    }
   }
 }

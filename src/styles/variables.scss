@@ -5,6 +5,7 @@ $input-height: 38px;
 $form-width: 400px;
 $main-color: #F8CB60;
 $main-light-color: color.scale($main-color, $lightness: 50%);
+$main-dark-color: color.scale($main-color, $blackness: 97%);
 $second-color: #212228;
 $error-color: #e82838;
 

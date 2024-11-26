@@ -1,0 +1,11 @@
+.ui-link {
+  color: $main-color;
+  text-decoration: underline;
+  cursor: pointer;
+  display: block;
+  text-align: center;
+
+  &:hover {
+    text-decoration: none;
+  }
+}

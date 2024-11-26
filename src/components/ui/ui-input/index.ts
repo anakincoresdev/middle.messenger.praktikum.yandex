@@ -4,7 +4,6 @@ import './ui-input.scss';
 
 const template = `
   <input
-    class="ui-input"
     type="{{ type }}"
     name="{{ name }}"
     value="{{ value }}"

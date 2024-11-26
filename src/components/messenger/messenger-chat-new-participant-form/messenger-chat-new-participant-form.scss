@@ -1,0 +1,19 @@
+.messenger-chat-new-participant-form {
+  .messenger-chat-participants {
+    margin-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+
+    & > div {
+      cursor: pointer;
+
+      &:hover {
+        background: $main-dark-color;
+      }
+    }
+  }
+
+  &__button {
+    margin-top: 10px;
+  }
+}

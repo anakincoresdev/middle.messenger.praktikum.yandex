@@ -2,21 +2,22 @@ import { Component } from '@/core/component.ts';
 import { UIInputField } from '@/components/ui/ui-input-field/index.ts';
 import { UIButton } from '@/components/ui/ui-button/index.ts';
 import { useValidator } from '@/utils/validator.ts';
+import { fetchAPI } from '@/utils/fetch.ts';
 import './registration.scss';
+import { router } from '@/router/Router.ts';
+import { useUser } from '@/models/user.ts';
 
 const template = `
-  <main class="registration-page">
-    <form class="registration-page__form">
-      <h1>{{ pageTitle }}</h1>
-      <div class="registration-page__grid">
-        {{{ formFields }}}
-      </div>
-      {{{ button }}}
-      <div class="registration-page__footer">
-        <a class="link">Уже есть аккаунт? Войти</a>
-      </div>
-    </form>
-  </main>
+  <form class="registration-page__form">
+    <h1>{{ pageTitle }}</h1>
+    <div class="registration-page__grid">
+      {{{ formFields }}}
+    </div>
+    {{{ button }}}
+    <div class="registration-page__footer">
+      <a class="link">Уже есть аккаунт? Войти</a>
+    </div>
+  </form>
 `;
 
 const form: Record<string, string> = {
@@ -53,7 +54,7 @@ const setFieldValue = (fieldName: string) => (evt: InputEvent) => {
 
 const errors = {
   first_name: 'Некорректное имя',
-  second_name: 'Некорректное имя',
+  second_name: 'Некорректная фамилия',
   login: 'Некорректный логин',
   email: 'Некорректный email',
   password: 'Некорректный пароль',
@@ -61,73 +62,157 @@ const errors = {
   message: 'Сообщение не должно быть пустым',
 };
 
-const getFieldEvents = (fieldName: string) => ({
-  input: setFieldValue(fieldName),
-  blur: checkFieldValidation({
-    validationRules,
-    form,
-    fieldName,
-    errors,
-  }),
+const nameInput = new UIInputField({
+  name: 'first_name',
+  label: 'Имя',
+  events: {
+    input: setFieldValue('first_name'),
+    focusout() {
+      checkFieldValidation({
+        validationRules,
+        errors,
+        field: nameInput,
+        form,
+      });
+    },
+  },
+});
+
+const secondNameInput = new UIInputField({
+  name: 'second_name',
+  label: 'Фамилия',
+  events: {
+    input: setFieldValue('second_name'),
+    focusout() {
+      checkFieldValidation({
+        validationRules,
+        errors,
+        field: secondNameInput,
+        form,
+      });
+    },
+  },
+});
+
+const phoneInput = new UIInputField({
+  name: 'phone',
+  label: 'Телефон',
+  events: {
+    input: setFieldValue('phone'),
+    focusout() {
+      checkFieldValidation({
+        validationRules,
+        errors,
+        field: phoneInput,
+        form,
+      });
+    },
+  },
+});
+
+const emailInput = new UIInputField({
+  name: 'email',
+  label: 'Email',
+  events: {
+    input: setFieldValue('email'),
+    focusout() {
+      checkFieldValidation({
+        validationRules,
+        errors,
+        field: emailInput,
+        form,
+      });
+    },
+  },
+});
+
+const loginInput = new UIInputField({
+  name: 'login',
+  label: 'Логин',
+  events: {
+    input: setFieldValue('login'),
+    focusout() {
+      checkFieldValidation({
+        validationRules,
+        errors,
+        field: loginInput,
+        form,
+      });
+    },
+  },
+});
+
+const passwordInput = new UIInputField({
+  name: 'password',
+  label: 'Пароль',
+  events: {
+    input: setFieldValue('password'),
+    focusout() {
+      checkFieldValidation({
+        validationRules,
+        errors,
+        field: passwordInput,
+        form,
+      });
+    },
+  },
 });
 
 const formFields = [
-  new UIInputField({
-    name: 'first_name',
-    label: 'Имя',
-    events: getFieldEvents('first_name'),
-  }),
-  new UIInputField({
-    name: 'second_name',
-    label: 'Фамилия',
-    events: getFieldEvents('second_name'),
-  }),
-  new UIInputField({
-    name: 'phone',
-    label: 'Телефон',
-    events: getFieldEvents('phone'),
-  }),
-  new UIInputField({
-    name: 'email',
-    label: 'Email',
-    events: getFieldEvents('email'),
-  }),
-  new UIInputField({
-    name: 'login',
-    label: 'Логин',
-    events: getFieldEvents('login'),
-  }),
-  new UIInputField({
-    name: 'password',
-    label: 'Пароль',
-    events: getFieldEvents('password'),
-  }),
+  nameInput,
+  secondNameInput,
+  phoneInput,
+  emailInput,
+  loginInput,
+  passwordInput,
 ];
 
 const button = new UIButton({
   text: 'Зарегистрироваться',
   className: 'registration-page__button',
   events: {
-    click() {
+    click: async () => {
       if (!validateForm(validationRules, form)) {
-        console.log('Форма заполнена не корректно');
+        formFields.forEach((input) => {
+          input._children.input.props.events.focusout();
+        });
         return;
       }
-      console.log(form);
+
+      const data = await fetchAPI.post('/auth/signup', { data: form });
+
+      if (data && data.status === 200) {
+        router.go('/');
+      }
     },
   },
 });
 
 export class RegistrationPage extends Component {
   constructor() {
-    super({
-      formFields,
-      button,
-      pageTitle: 'Регистрация',
-    });
+    super(
+      {
+        attr: {
+          class: 'registration-page',
+        },
+        formFields,
+        button,
+        pageTitle: 'Регистрация',
+      },
+      'main',
+    );
   }
 
   render() {
     return this.compile(template);
+  }
+
+  async componentDidMount() {
+    const { getUser } = useUser();
+    const user = await getUser();
+
+    if (user) {
+      router.go('/messenger');
+    }
   }
 }

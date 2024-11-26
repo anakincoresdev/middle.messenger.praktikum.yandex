@@ -3,7 +3,7 @@ import { EventBus } from '@/core/event-bus.ts';
 import { v4 as makeUUID } from 'uuid';
 import { Events, Props } from '@/core/types/index.ts';
 
-export class Component {
+export abstract class Component {
   static EVENTS = {
     INIT: 'init',
     FLOW_CDM: 'flow:component-did-mount',
@@ -13,9 +13,9 @@ export class Component {
 
   readonly eventBus: () => EventBus;
 
-  private _element: Node | null = null;
+  private _element: Node;
 
-  private readonly _id: string;
+  readonly _id: string;
 
   props: Props;
 
@@ -27,7 +27,9 @@ export class Component {
 
   _lists;
 
-  constructor(propsAndChildren: Props) {
+  tag: string;
+
+  constructor(propsAndChildren: Props, tag: string = 'div') {
     const { children, props, lists } = this._separateProps(propsAndChildren);
 
     const eventBus = new EventBus();
@@ -35,7 +37,11 @@ export class Component {
 
     this._props = props;
 
+    this.tag = tag;
+
     this._id = makeUUID();
+
+    this._element = document.createElement(this.tag);
 
     this.props = this._makePropsProxy({ ...props, __id: this._id });
     this._children = this._makePropsProxy(children);
@@ -120,7 +126,19 @@ export class Component {
         throw new Error('Error: Event callback must be a function');
       }
 
-      this._element?.addEventListener(eventName, callback);
+      this._element?.addEventListener(eventName, callback.bind(this));
+    });
+  }
+
+  private _addAttributes() {
+    const attr = this.props.attr as Record<string, string>;
+
+    if (!attr) {
+      return;
+    }
+
+    Object.entries(attr).forEach(([key, value]) => {
+      (this._element as HTMLElement).setAttribute(key, value);
     });
   }
 
@@ -185,7 +203,7 @@ export class Component {
       stub.replaceWith(listFragment.content);
     });
 
-    return fragment.content.firstElementChild as HTMLElement;
+    return fragment.content;
   }
 
   init() {
@@ -209,23 +227,23 @@ export class Component {
 
   componentDidMount(): void {}
 
-  componentDidUpdate(oldProps: Props, nextProps: Props): boolean {
-    return true;
+  componentDidUpdate([oldProps, nextProps]: Props[]): boolean {
+    return Boolean(oldProps) && Boolean(nextProps);
   }
 
   dispatchComponentDidMount() {
     this.eventBus().emit(Component.EVENTS.FLOW_CDM);
   }
 
-  _componentDidUpdate(oldProps, nextProps) {
-    const isReRender = this.componentDidUpdate(oldProps, nextProps);
+  _componentDidUpdate([oldProps, nextProps]: Props[]) {
+    const isReRender = this.componentDidUpdate([oldProps, nextProps]);
     if (isReRender) {
       this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
     }
   }
 
-  render(): HTMLElement {
-    return document.createDocumentFragment().firstElementChild as HTMLElement;
+  render(): DocumentFragment {
+    return document.createDocumentFragment();
   }
 
   _render() {
@@ -233,12 +251,10 @@ export class Component {
 
     this._removeEvents();
 
-    if (this._element) {
-      (this._element as HTMLElement).innerHTML = component.innerHTML;
-    } else {
-      this._element = component;
-    }
+    (this._element as HTMLElement).innerHTML = '';
+    this._element.appendChild(component);
 
+    this._addAttributes();
     this._addEvents();
   }
 
