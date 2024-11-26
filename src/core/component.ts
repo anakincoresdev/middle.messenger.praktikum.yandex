@@ -3,7 +3,7 @@ import { EventBus } from '@/core/event-bus.ts';
 import { v4 as makeUUID } from 'uuid';
 import { Events, Props } from '@/core/types/index.ts';
 
-export class Component {
+export abstract class Component {
   static EVENTS = {
     INIT: 'init',
     FLOW_CDM: 'flow:component-did-mount',
@@ -126,7 +126,7 @@ export class Component {
         throw new Error('Error: Event callback must be a function');
       }
 
-      this._element?.addEventListener(eventName, callback);
+      this._element?.addEventListener(eventName, callback.bind(this));
     });
   }
 
@@ -228,8 +228,7 @@ export class Component {
   componentDidMount(): void {}
 
   componentDidUpdate([oldProps, nextProps]: Props[]): boolean {
-    console.log(oldProps, nextProps);
-    return true;
+    return Boolean(oldProps) && Boolean(nextProps);
   }
 
   dispatchComponentDidMount() {

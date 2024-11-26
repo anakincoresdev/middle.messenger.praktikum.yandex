@@ -9,6 +9,7 @@ import { router } from '@/router/Router.ts';
 import { fetchAPI } from '@/utils/fetch.ts';
 import { useUser } from '@/models/user.ts';
 import { User } from '@/types/api/User.ts';
+import { UIFile } from '@/components/ui/ui-file/index.ts';
 
 const template = `
   <main class="profile-page">
@@ -18,7 +19,7 @@ const template = `
           {{{ avatar }}}
           <div>
             <h1>{{ pageTitle }}</h1>
-            {{{ changeAvatarButton }}}
+            {{{ fileInput }}}
           </div>
         </div>
         {{{ logoutButton }}}
@@ -249,7 +250,32 @@ function fillFormValues(user: User) {
   loginInput.setProps({ value: form.login });
   form.display_name = user.display_name;
   displayNameInput.setProps({ value: form.display_name });
+
+  avatar.setProps({ src: user.avatar });
 }
+
+const fileInput = new UIFile({
+  button: changeAvatarButton,
+  events: {
+    async change(evt: InputEvent) {
+      const { target } = evt;
+      const { files } = target as HTMLFormElement;
+      const { 0: file } = files;
+
+      if (!file) {
+        return;
+      }
+
+      const { name } = file;
+
+      const formData = new FormData();
+
+      formData.append('avatar', file, name.replace(/\s/g, ''));
+
+      await fetchAPI.put('/user/profile/avatar', { data: formData });
+    },
+  },
+});
 
 export class ProfilePage extends Component {
   constructor() {
@@ -260,6 +286,7 @@ export class ProfilePage extends Component {
       formFields,
       messengerLink,
       logoutButton,
+      fileInput,
       pageTitle: 'Профиль',
     });
   }

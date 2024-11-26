@@ -73,9 +73,13 @@ class HTTPTransport {
 
       xhr.open(method, isGet && data ? `${url}${queryStringify(data)}` : url);
 
-      Object.keys(headers).forEach((key) => {
-        xhr.setRequestHeader(key, headers[key]);
-      });
+      const isFormData = data instanceof FormData;
+
+      if (!isFormData) {
+        Object.keys(headers).forEach((key) => {
+          xhr.setRequestHeader(key, headers[key]);
+        });
+      }
 
       xhr.onload = () => {
         resolve(xhr);
@@ -90,6 +94,8 @@ class HTTPTransport {
 
       if (isGet || !data) {
         xhr.send();
+      } else if (data instanceof FormData) {
+        xhr.send(data);
       } else {
         xhr.send(JSON.stringify(data));
       }

@@ -4,6 +4,11 @@
   display: flex;
   align-items: center;
   cursor: pointer;
+  border-radius: 2px;
+
+  &_active {
+    background: $main-dark-color;
+  }
 
   &:hover {
     background: $main-dark-color;
@@ -31,5 +36,14 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+  }
+
+  &__delete {
+    visibility: hidden;
+    margin-right: 10px;
+  }
+
+  &:hover &__delete {
+    visibility: visible;
   }
 }

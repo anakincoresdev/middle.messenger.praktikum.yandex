@@ -1,0 +1,13 @@
+.ui-file {
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  input {
+    opacity: 0;
+    position: absolute;
+  }
+}

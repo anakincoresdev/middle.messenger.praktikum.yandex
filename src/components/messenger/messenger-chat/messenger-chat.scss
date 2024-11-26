@@ -17,6 +17,7 @@
     display: flex;
     flex-direction: column-reverse;
     align-items: flex-start;
+    overflow-y: auto;
 
     .ui-message {
       margin-top: 15px;
@@ -38,5 +39,21 @@
   &__button {
     margin-left: 20px;
     width: 120px;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+
+    & > div {
+      margin-left: 20px;
+    }
+  }
+
+  &__empty {
+    width: 100%;
+    margin-top: 100px;
+    text-align: center;
+    font-size: 40px;
   }
 }

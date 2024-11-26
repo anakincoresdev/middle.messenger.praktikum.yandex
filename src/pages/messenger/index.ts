@@ -1,14 +1,12 @@
 import { Component } from '@/core/component.ts';
-import { UIInputField } from '@/components/ui/ui-input-field/index.ts';
 import { MessengerSidebar } from '@/components/messenger/messenger-sidebar/index.ts';
 import { MessengerCard } from '@/components/messenger/messenger-card/index.ts';
 import { MessengerChat } from '@/components/messenger/messenger-chat/index.ts';
 import { UIMessage } from '@/components/ui/ui-message/index.ts';
-import './messenger-page.scss';
 import { useUser } from '@/models/user.ts';
 import { router } from '@/router/Router.ts';
 import { useChat } from '@/models/chat.ts';
-import { UIButton } from '@/components/ui/ui-button/index.ts';
+import './messenger-page.scss';
 
 const template = `
   <section class="messenger-page">
@@ -21,56 +19,108 @@ const template = `
   </section>
 `;
 
-const { getUser } = useUser();
-const { getChats, createChat, openChat } = useChat();
+const { getUser, user } = useUser();
+const {
+  getChats,
+  openChat,
+  deleteChat,
+  closeChat,
+  getChatParticipants,
+} = useChat();
 
 const chat = new MessengerChat({
-  items: [
-    new UIMessage({
-      text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
-    }),
-    new UIMessage({
-      text: 'Ок.',
-      isSelfMessage: true,
-    }),
-  ].reverse(),
+  title: 'Выберите чат',
+  currentChatId: 0,
+  items: [],
+  isLoading: false,
 });
 
-const newChatForm = {
-  title: '',
-};
+function onChatCardClick(item) {
+  return async () => {
+    chat.setProps({ isLoading: true });
+    closeChat();
+    const socket = await openChat(item.id, user.data?.id);
+    const participants = await getChatParticipants(item.id);
 
-const newChatInput = new UIInputField({
-  placeholder: 'Название нового чата',
-  name: 'chatTitle',
-  attr: {
-    class: 'messenger-page__new-chat-inp',
-  },
-  events: {
-    input(evt: InputEvent) {
-      newChatForm.title = (evt.target as HTMLInputElement).value;
-    },
-  },
-});
+    socket.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data);
 
-const newChatButton = new UIButton({
-  text: '+',
-  events: {
-    click: async () => {
-      if (newChatForm.title) {
-        await createChat(newChatForm.title);
-        newChatForm.title = '';
-        newChatInput.setProps({ value: '' });
+      if (data.type === 'pong') {
+        return;
       }
-    },
-  },
-});
+
+      if (Array.isArray(data)) {
+        const messageComponents = data.map(
+          (message) => {
+            const messageUser = participants.find((participant) => participant.id === message.user_id);
+            const messageUserName = `${messageUser.second_name} ${messageUser.first_name}`;
+
+            return new UIMessage({
+              author: messageUserName,
+              text: message.content,
+              isSelfMessage: message.user_id === user.data?.id,
+            });
+          },
+        );
+
+        chat.setProps({
+          items: messageComponents,
+          title: item.title,
+          currentChatId: item.id,
+          isLoading: false,
+        });
+      } else {
+        const messages = chat._lists.items.slice();
+        const messageUser = participants.find((participant) => participant.id === data.user_id);
+        const messageUserName = `${messageUser.second_name} ${messageUser.first_name}`;
+
+        messages.unshift(
+          new UIMessage({
+            author: messageUserName,
+            text: data.content,
+            isSelfMessage: data.user_id === user.data?.id,
+          }),
+        );
+        chat.setProps({ items: messages, isLoading: false });
+      }
+    });
+  };
+}
+
+async function getAndSetChatList(itemsParentComponent: Component) {
+  const chats = await getChats();
+
+  if (chats) {
+    const items = chats.map(
+      (item) =>
+        new MessengerCard({
+          name: item.title,
+          message: item.last_message?.content || 'Пока нет сообщений',
+          isActive: false,
+          deleteChat: async () => {
+            await deleteChat(item.id);
+            await getAndSetChatList(itemsParentComponent);
+          },
+          events: {
+            click() {
+              onChatCardClick.bind(this)(item)();
+              items.forEach((card) => {
+                card.setProps({ isActive: card._id === this._id });
+              });
+            },
+          },
+        }),
+    );
+
+    itemsParentComponent.setProps({ items });
+  }
+}
 
 const sidebar = new MessengerSidebar({
-  className: 'asdasdaw',
   items: [],
-  newChatInput,
-  newChatButton,
+  onChatCreated: async () => {
+    await getAndSetChatList(sidebar);
+  },
 });
 
 export class MessengerPage extends Component {
@@ -87,28 +137,12 @@ export class MessengerPage extends Component {
   }
 
   async componentDidMount() {
-    const user = await getUser();
+    await getUser();
 
-    if (!user) {
+    if (!user.data) {
       router.go('/');
     }
 
-    const chats = await getChats();
-    if (chats) {
-      const items = chats.reduce((acc, item) => {
-        acc.push(
-          new MessengerCard({
-            name: item.title,
-            message: item.last_message || 'Пока нет сообщений',
-            events: {
-              click: () => openChat(item.id),
-            },
-          }),
-        );
-        return acc;
-      }, []);
-
-      sidebar.setProps({ items });
-    }
+    await getAndSetChatList(sidebar);
   }
 }
