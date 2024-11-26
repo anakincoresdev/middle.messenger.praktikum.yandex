@@ -3,7 +3,7 @@ import { Chat, ChatParticipant } from '@/types/api/Chat.ts';
 
 const chat: {
   socket: null | WebSocket;
-  pingInterval: ReturnType<typeof window.setInterval> | null;
+  pingInterval: number | null;
   users: null,
 } = {
   socket: null,
