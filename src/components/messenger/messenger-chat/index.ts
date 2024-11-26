@@ -14,7 +14,7 @@ import {
 } from '@/components/messenger/messenger-chat-participant-item/index.ts';
 import {
   MessengerChatNewParticipantForm,
-} from '@/components/messenger/messenger-chat-new-participant-form';
+} from '@/components/messenger/messenger-chat-new-participant-form/index.ts';
 import { ChatParticipant } from '@/types/api/Chat.ts';
 
 const template = `

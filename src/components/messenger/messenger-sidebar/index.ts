@@ -3,7 +3,7 @@ import { UIButton } from '@/components/ui/ui-button/index.ts';
 import { UIModal } from '@/components/ui/ui-modal/index.ts';
 import { MessengerChatForm } from '@/components/messenger/messenger-chat-form/index.ts';
 import './messenger-sidebar.scss';
-import { Props } from '@/core/types';
+import { Props } from '@/core/types/index.ts';
 
 const template = `
   <div class="messenger-sidebar">
