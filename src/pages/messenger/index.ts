@@ -52,45 +52,49 @@ function onChatCardClick(item: Chat) {
     }
 
     socket.addEventListener('message', (event) => {
-      const data = JSON.parse(event.data);
+      try {
+        const data = JSON.parse(event.data);
 
-      if (data.type === 'pong') {
-        return;
-      }
+        if (data.type === 'pong') {
+          return;
+        }
 
-      if (Array.isArray(data)) {
-        const messageComponents = data.map(
-          (message) => {
-            const messageUser = participants?.find((participant) => participant.id === message.user_id);
-            const messageUserName = `${messageUser?.second_name} ${messageUser?.first_name}`;
+        if (Array.isArray(data)) {
+          const messageComponents = data.map(
+            (message) => {
+              const messageUser = participants?.find((participant) => participant.id === message.user_id);
+              const messageUserName = `${messageUser?.second_name} ${messageUser?.first_name}`;
 
-            return new UIMessage({
+              return new UIMessage({
+                author: messageUserName,
+                text: message.content,
+                isSelfMessage: message.user_id === user.data?.id,
+              });
+            },
+          );
+
+          chat.setProps({
+            items: messageComponents,
+            title: item.title,
+            currentChatId: item.id,
+            isLoading: false,
+          });
+        } else {
+          const messages = chat._lists.items.slice();
+          const messageUser = participants?.find((participant) => participant.id === data.user_id);
+          const messageUserName = `${messageUser?.second_name} ${messageUser?.first_name}`;
+
+          messages.unshift(
+            new UIMessage({
               author: messageUserName,
-              text: message.content,
-              isSelfMessage: message.user_id === user.data?.id,
-            });
-          },
-        );
-
-        chat.setProps({
-          items: messageComponents,
-          title: item.title,
-          currentChatId: item.id,
-          isLoading: false,
-        });
-      } else {
-        const messages = chat._lists.items.slice();
-        const messageUser = participants?.find((participant) => participant.id === data.user_id);
-        const messageUserName = `${messageUser?.second_name} ${messageUser?.first_name}`;
-
-        messages.unshift(
-          new UIMessage({
-            author: messageUserName,
-            text: data.content,
-            isSelfMessage: data.user_id === user.data?.id,
-          }),
-        );
-        chat.setProps({ items: messages, isLoading: false });
+              text: data.content,
+              isSelfMessage: data.user_id === user.data?.id,
+            }),
+          );
+          chat.setProps({ items: messages, isLoading: false });
+        }
+      } catch (e) {
+        console.error(e);
       }
     });
   };
