@@ -168,7 +168,7 @@ export class MessengerChat extends Component {
       newParticipantLink,
       chatParticipants,
       events: {
-        keydown: debounce((event) => {
+        keydown: debounce((event: KeyboardEvent) => {
           if (event.key === 'Enter') {
             chat.socket?.send(JSON.stringify({ content: form.message, type: 'message' }));
             form.message = '';
