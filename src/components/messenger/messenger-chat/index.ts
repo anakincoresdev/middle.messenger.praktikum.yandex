@@ -9,14 +9,11 @@ import { router } from '@/router/Router.ts';
 import { MessengerChatParticipants } from '@/components/messenger/messenger-chat-participants/index.ts';
 import './messenger-chat.scss';
 import { useChat } from '@/models/chat.ts';
-import {
-  MessengerChatParticipantItem,
-} from '@/components/messenger/messenger-chat-participant-item/index.ts';
-import {
-  MessengerChatNewParticipantForm,
-} from '@/components/messenger/messenger-chat-new-participant-form/index.ts';
+import { MessengerChatParticipantItem } from '@/components/messenger/messenger-chat-participant-item/index.ts';
+import { MessengerChatNewParticipantForm } from '@/components/messenger/messenger-chat-new-participant-form/index.ts';
 import { ChatParticipant } from '@/types/api/Chat.ts';
 import { debounce } from '@/utils/common.ts';
+import { fetchAPI } from '@/utils/fetch.ts';
 
 const template = `
   <div class="messenger-chat">
@@ -98,7 +95,9 @@ export class MessengerChat extends Component {
             console.log('Форма заполнена не корректно');
             return;
           }
-          chat.socket?.send(JSON.stringify({ content: form.message, type: 'message' }));
+          chat.socket?.send(
+            JSON.stringify({ content: form.message, type: 'message' }),
+          );
           form.message = '';
           input.setProps({ value: '' });
         },
@@ -148,7 +147,9 @@ export class MessengerChat extends Component {
       events: {
         click: () => {
           this.setProps({ isNewParticipantWindowOpened: true });
-          newParticipantModal._children.content.setProps({ chatId: this.props.currentChatId });
+          newParticipantModal._children.content.setProps({
+            chatId: this.props.currentChatId,
+          });
         },
       },
     });
@@ -170,7 +171,9 @@ export class MessengerChat extends Component {
       events: {
         keydown: debounce((event: KeyboardEvent) => {
           if (event.key === 'Enter') {
-            chat.socket?.send(JSON.stringify({ content: form.message, type: 'message' }));
+            chat.socket?.send(
+              JSON.stringify({ content: form.message, type: 'message' }),
+            );
             form.message = '';
             input.setProps({ value: '' });
           }
@@ -188,10 +191,31 @@ export class MessengerChat extends Component {
       if (data && data.length) {
         chatParticipants.items = data;
         participantsForm.setProps({
-          items: data.map((item) => new MessengerChatParticipantItem({
-            name: `${item.second_name} ${item.first_name}`,
-            avatarSrc: item.avatar,
-          })),
+          items: data.map(
+            (item) =>
+              new MessengerChatParticipantItem({
+                name: `${item.second_name} ${item.first_name}`,
+                avatarSrc: item.avatar,
+                removeBtn: new UILink({
+                  text: '🗑',
+                  events: {
+                    click: async () => {
+                      try {
+                        await fetchAPI.delete('/chats/users', {
+                          data: {
+                            chatId: this.props.currentChatId,
+                            users: [item.id],
+                          },
+                        });
+                        this.setProps({ isParticipantsWindowOpened: false });
+                      } catch (e) {
+                        console.error(e);
+                      }
+                    },
+                  },
+                }),
+              }),
+          ),
         });
       }
     });

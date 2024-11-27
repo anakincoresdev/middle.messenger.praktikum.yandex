@@ -82,6 +82,10 @@ class HTTPTransport {
       }
 
       xhr.onload = () => {
+        if (['3', '4', '5'].includes(String(xhr.status)[0])) {
+          reject(new Error(xhr.response));
+          return;
+        }
         resolve(xhr);
       };
 

@@ -93,10 +93,11 @@ const logoutButton = new UIButton({
   text: 'Выйти',
   events: {
     click: async () => {
-      const data = await fetchAPI.post('/auth/logout');
-
-      if (data && data.status === 200) {
+      try {
+        await fetchAPI.post('/auth/logout');
         router.go('/');
+      } catch (e) {
+        console.error(e);
       }
     },
   },
@@ -228,10 +229,12 @@ const submitButton = new UIButton({
         });
         return;
       }
-      const data = await fetchAPI.put('/user/profile', { data: form });
 
-      if (data && data.status === 200) {
+      try {
+        await fetchAPI.put('/user/profile', { data: form });
         router.go('/messenger');
+      } catch (e) {
+        console.error(e);
       }
     },
   },
@@ -281,7 +284,11 @@ const fileInput = new UIFile({
 
       formData.append('avatar', file, name.replace(/\s/g, ''));
 
-      await fetchAPI.put('/user/profile/avatar', { data: formData });
+      try {
+        await fetchAPI.put('/user/profile/avatar', { data: formData });
+      } catch (e) {
+        console.error(e);
+      }
     },
   },
 });

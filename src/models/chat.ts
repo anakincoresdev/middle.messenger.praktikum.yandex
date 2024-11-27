@@ -13,17 +13,18 @@ const chat: {
 
 export function useChat() {
   async function getChats() {
-    const data = await fetchAPI.get('/chats');
+    try {
+      const data = await fetchAPI.get('/chats');
 
-    if (data.status === 200) {
       return JSON.parse(data.response) as Chat[];
+    } catch (e) {
+      console.error(e);
+      return null;
     }
-
-    return null;
   }
 
   async function createChat(title: string) {
-    return fetchAPI.post('/chats', { data: { title } });
+    return fetchAPI.post('/chatss', { data: { title } });
   }
 
   async function deleteChat(chatId: number) {
@@ -31,40 +32,38 @@ export function useChat() {
   }
 
   async function openChat(chatId: number, userId: number): Promise<WebSocket | null> {
-    const tokenResponse = await fetchAPI.post(`/chats/token/${chatId}`);
+    try {
+      const tokenResponse = await fetchAPI.post(`/chats/token/${chatId}`);
+      const { token } = JSON.parse(tokenResponse.response);
+      const socketUrl = `wss://ya-praktikum.tech/ws/chats/${userId}/${chatId}/${token}`;
 
-    if (tokenResponse.status !== 200) {
-      return null;
+      chat.socket = new WebSocket(socketUrl);
+
+      chat.socket.addEventListener('open', () => {
+        chat.socket?.send(
+          JSON.stringify({
+            content: '0',
+            type: 'get old',
+          }),
+        );
+      });
+
+      chat.pingInterval = window.setInterval(() => {
+        chat.socket?.send(JSON.stringify({ type: 'ping' }));
+      }, 5000);
+
+      chat.socket.addEventListener('close', (event) => {
+        if (event.wasClean) {
+          console.log('Соединение закрыто чисто');
+        } else {
+          console.log('Обрыв соединения');
+        }
+
+        console.log(`Код: ${event.code} | Причина: ${event.reason}`);
+      });
+    } catch (e) {
+      console.error(e);
     }
-
-    const { token } = JSON.parse(tokenResponse.response);
-
-    const socketUrl = `wss://ya-praktikum.tech/ws/chats/${userId}/${chatId}/${token}`;
-
-    chat.socket = new WebSocket(socketUrl);
-
-    chat.socket.addEventListener('open', () => {
-      chat.socket?.send(
-        JSON.stringify({
-          content: '0',
-          type: 'get old',
-        }),
-      );
-    });
-
-    chat.pingInterval = window.setInterval(() => {
-      chat.socket?.send(JSON.stringify({ type: 'ping' }));
-    }, 5000);
-
-    chat.socket.addEventListener('close', (event) => {
-      if (event.wasClean) {
-        console.log('Соединение закрыто чисто');
-      } else {
-        console.log('Обрыв соединения');
-      }
-
-      console.log(`Код: ${event.code} | Причина: ${event.reason}`);
-    });
 
     return chat.socket;
   }
@@ -83,13 +82,12 @@ export function useChat() {
   }
 
   async function getChatParticipants(id: number) {
-    const data = await fetchAPI.get(`/chats/${id}/users`);
-
-    if (data.status === 200) {
+    try {
+      const data = await fetchAPI.get(`/chats/${id}/users`);
       return JSON.parse(data.response) as ChatParticipant[];
+    } catch (e) {
+      return null;
     }
-
-    return null;
   }
 
   return {

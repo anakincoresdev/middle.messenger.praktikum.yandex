@@ -87,10 +87,12 @@ const button = new UIButton({
         console.log('Форма заполнена не корректно');
         return;
       }
-      const data = await fetchAPI.post('/auth/signin', { data: form });
+      try {
+        await fetchAPI.post('/auth/signin', { data: form });
 
-      if (data && data.status === 200) {
         router.go('/messenger');
+      } catch (e) {
+        console.error(e);
       }
     },
   },

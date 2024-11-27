@@ -179,10 +179,11 @@ const button = new UIButton({
         return;
       }
 
-      const data = await fetchAPI.post('/auth/signup', { data: form });
-
-      if (data && data.status === 200) {
+      try {
+        await fetchAPI.post('/auth/signup', { data: form });
         router.go('/');
+      } catch (e) {
+        console.error(e);
       }
     },
   },

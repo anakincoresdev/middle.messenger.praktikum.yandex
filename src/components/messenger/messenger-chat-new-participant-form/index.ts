@@ -33,10 +33,9 @@ export class MessengerChatNewParticipantForm extends Component {
       name: 'search',
       events: {
         input: debounce(async (evt: InputEvent) => {
-          const login = (evt.target as HTMLInputElement).value;
-          const data = await fetchAPI.post('/user/search', { data: { login } });
-
-          if (data.status === 200) {
+          try {
+            const login = (evt.target as HTMLInputElement).value;
+            const data = await fetchAPI.post('/user/search', { data: { login } });
             const participants = JSON.parse(data.response) as ChatParticipant[];
 
             const items = participants.map(
@@ -59,6 +58,8 @@ export class MessengerChatNewParticipantForm extends Component {
             );
 
             participantsList.setProps({ items });
+          } catch (e) {
+            console.error(e);
           }
         }, 300),
       },
@@ -73,11 +74,12 @@ export class MessengerChatNewParticipantForm extends Component {
             users: [this.props.selectedParticipantId],
             chatId: this.props.chatId,
           };
+          try {
+            await fetchAPI.put('/chats/users', { data: form });
 
-          const data = await fetchAPI.put('/chats/users', { data: form });
-
-          if (data.status === 200) {
             this.props.onClose();
+          } catch (e) {
+            console.error(e);
           }
         },
       },

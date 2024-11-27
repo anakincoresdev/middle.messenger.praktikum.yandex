@@ -37,7 +37,12 @@ export class MessengerChatForm extends Component {
       events: {
         click: async () => {
           if (newChatForm.title) {
-            await createChat(newChatForm.title);
+            try {
+              await createChat(newChatForm.title);
+            } catch (e) {
+              console.error(e);
+              return;
+            }
             newChatForm.title = '';
             newChatInput.setProps({ value: '' });
             props.onChatCreated();

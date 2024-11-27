@@ -5,14 +5,17 @@ const user: { data: User | null } = { data: null };
 
 export function useUser() {
   async function getUser(): Promise<User | null> {
-    const data = await fetchAPI.get('/auth/user');
+    try {
+      const data = await fetchAPI.get('/auth/user');
 
-    if (data.status === 200 && data.response) {
       user.data = JSON.parse(data.response) as User;
-    } else {
+
+      return user.data;
+    } catch (e) {
       user.data = null;
+      console.error(e);
+      return null;
     }
-    return user.data;
   }
 
   return {

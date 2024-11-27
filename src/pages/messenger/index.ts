@@ -111,7 +111,12 @@ async function getAndSetChatList(itemsParentComponent: Component) {
           message: item.last_message?.content || 'Пока нет сообщений',
           isActive: false,
           deleteChat: async () => {
-            await deleteChat(item.id);
+            try {
+              await deleteChat(item.id);
+            } catch (e) {
+              console.error(e);
+              return;
+            }
             await getAndSetChatList(itemsParentComponent);
           },
           events: {

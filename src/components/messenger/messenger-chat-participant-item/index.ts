@@ -5,8 +5,11 @@ import './messenger-chat-participant-item.scss';
 
 const template = `
   <div class="messenger-chat-participant-item{{#if isActive}} messenger-chat-participant-item_active{{/if}}">
-    {{{ avatar }}}
-    {{ name }}
+    <div class="messenger-chat-participant-item__info">
+        {{{ avatar }}}
+        {{ name }}
+    </div>
+    {{{ removeBtn }}}
   </div>
 `;
 
