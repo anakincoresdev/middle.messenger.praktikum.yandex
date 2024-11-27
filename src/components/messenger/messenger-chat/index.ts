@@ -16,6 +16,7 @@ import {
   MessengerChatNewParticipantForm,
 } from '@/components/messenger/messenger-chat-new-participant-form/index.ts';
 import { ChatParticipant } from '@/types/api/Chat.ts';
+import { debounce } from '@/utils/common.ts';
 
 const template = `
   <div class="messenger-chat">
@@ -38,10 +39,10 @@ const template = `
     <div class="messenger-chat__messages">
       {{{ items }}}
     </div>
-    <form class="messenger-chat__form">
+    <div class="messenger-chat__form">
       {{{ input }}}
       {{{ button }}}
-    </form>
+    </div>
   {{else}}
     <div class="messenger-chat__empty">
       Выберите чат
@@ -95,6 +96,7 @@ export class MessengerChat extends Component {
         click: () => {
           if (!validateForm(validationRules, form)) {
             console.log('Форма заполнена не корректно');
+            return;
           }
           chat.socket?.send(JSON.stringify({ content: form.message, type: 'message' }));
           form.message = '';
@@ -165,6 +167,15 @@ export class MessengerChat extends Component {
       newParticipantModal,
       newParticipantLink,
       chatParticipants,
+      events: {
+        keydown: debounce((event) => {
+          if (event.key === 'Enter') {
+            chat.socket?.send(JSON.stringify({ content: form.message, type: 'message' }));
+            form.message = '';
+            input.setProps({ value: '' });
+          }
+        }, 100),
+      },
     });
   }
 

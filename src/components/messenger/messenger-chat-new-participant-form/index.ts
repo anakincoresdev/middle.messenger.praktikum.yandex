@@ -11,9 +11,9 @@ import './messenger-chat-new-participant-form.scss';
 import { ChatParticipant } from '@/types/api/Chat.ts';
 
 const template = `
-  <form class="messenger-chat-new-participant-form">
+  <div class="messenger-chat-new-participant-form">
     {{{ input }}}
-  </form>
+  </div>
   {{#if selectedParticipantId}}
     {{{ button }}}
   {{/if}}
