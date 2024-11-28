@@ -24,7 +24,7 @@ export function useChat() {
   }
 
   async function createChat(title: string) {
-    return fetchAPI.post('/chatss', { data: { title } });
+    return fetchAPI.post('/chats', { data: { title } });
   }
 
   async function deleteChat(chatId: number) {
