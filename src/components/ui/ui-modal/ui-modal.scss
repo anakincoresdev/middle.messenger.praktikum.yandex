@@ -1,0 +1,31 @@
+.ui-modal {
+  width: 100vw;
+  height: 100vh;
+  background: rgba(35,35,35, 80%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  &__content {
+    position: relative;
+    background: $second-color;
+    border-radius: 6px;
+    border: 1px solid $main-color;
+    min-width: 400px;
+    padding: 20px;
+  }
+
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    font-size: 20px;
+    font-weight: 600;
+  }
+}

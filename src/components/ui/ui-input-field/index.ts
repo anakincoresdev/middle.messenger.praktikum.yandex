@@ -4,11 +4,15 @@ import { UIInput } from '@/components/ui/ui-input/index.ts';
 import { Props } from '@/core/types/index.ts';
 
 const template = `
-  <div class="ui-input-field__label">{{ label }}</div>
+  {{#if label}}
+    <div class="ui-input-field__label">{{ label }}</div>
+  {{/if}}
   {{{ input }}}
-  <div class="ui-input-field__error">
-    {{ errorText }}
-  </div>
+  {{#if errorText}}
+    <div class="ui-input-field__error">
+      {{ errorText }}
+    </div>
+  {{/if}}
 `;
 
 export class UIInputField extends Component {
@@ -33,5 +37,12 @@ export class UIInputField extends Component {
 
   render() {
     return this.compile(template);
+  }
+
+  componentDidUpdate([oldProps, nextProps]: Props[]): boolean {
+    if (oldProps.value !== nextProps.value) {
+      this._children.input.setProps({ value: nextProps.value });
+    }
+    return super.componentDidUpdate([oldProps, nextProps]);
   }
 }

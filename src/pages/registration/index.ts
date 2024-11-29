@@ -2,7 +2,10 @@ import { Component } from '@/core/component.ts';
 import { UIInputField } from '@/components/ui/ui-input-field/index.ts';
 import { UIButton } from '@/components/ui/ui-button/index.ts';
 import { useValidator } from '@/utils/validator.ts';
+import { fetchAPI } from '@/utils/fetch.ts';
 import './registration.scss';
+import { router } from '@/router/Router.ts';
+import { useUser } from '@/models/user.ts';
 
 const template = `
   <form class="registration-page__form">
@@ -168,14 +171,20 @@ const button = new UIButton({
   text: 'Зарегистрироваться',
   className: 'registration-page__button',
   events: {
-    click() {
+    click: async () => {
       if (!validateForm(validationRules, form)) {
         formFields.forEach((input) => {
           input._children.input.props.events.focusout();
         });
         return;
       }
-      console.log(form);
+
+      try {
+        await fetchAPI.post('/auth/signup', { data: form });
+        router.go('/');
+      } catch (e) {
+        console.error(e);
+      }
     },
   },
 });
@@ -197,5 +206,14 @@ export class RegistrationPage extends Component {
 
   render() {
     return this.compile(template);
+  }
+
+  async componentDidMount() {
+    const { getUser } = useUser();
+    const user = await getUser();
+
+    if (user) {
+      router.go('/messenger');
+    }
   }
 }

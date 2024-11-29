@@ -1,0 +1,19 @@
+.messenger-chat-participant-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .ui-avatar {
+    margin-right: 10px;
+  }
+
+  &_active {
+    background: $main-dark-color;
+  }
+
+  &__info {
+    display: flex;
+    align-items: center;
+    margin-right: 4px;
+  }
+}

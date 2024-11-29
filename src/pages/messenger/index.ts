@@ -1,10 +1,13 @@
 import { Component } from '@/core/component.ts';
-import { UIInputField } from '@/components/ui/ui-input-field/index.ts';
 import { MessengerSidebar } from '@/components/messenger/messenger-sidebar/index.ts';
 import { MessengerCard } from '@/components/messenger/messenger-card/index.ts';
 import { MessengerChat } from '@/components/messenger/messenger-chat/index.ts';
 import { UIMessage } from '@/components/ui/ui-message/index.ts';
+import { useUser } from '@/models/user.ts';
+import { router } from '@/router/Router.ts';
+import { useChat } from '@/models/chat.ts';
 import './messenger-page.scss';
+import { Chat } from '@/types/api/Chat.ts';
 
 const template = `
   <section class="messenger-page">
@@ -17,51 +20,129 @@ const template = `
   </section>
 `;
 
+const { getUser, user } = useUser();
+const {
+  getChats,
+  openChat,
+  deleteChat,
+  closeChat,
+  getChatParticipants,
+} = useChat();
+
+const chat = new MessengerChat({
+  title: 'Выберите чат',
+  currentChatId: 0,
+  items: [],
+  isLoading: false,
+});
+
+function onChatCardClick(item: Chat) {
+  return async () => {
+    if (!user.data?.id) {
+      return;
+    }
+
+    chat.setProps({ isLoading: true });
+    closeChat();
+    const socket = await openChat(item.id, user.data.id);
+    const participants = await getChatParticipants(item.id);
+
+    if (!socket) {
+      return;
+    }
+
+    socket.addEventListener('message', (event) => {
+      try {
+        const data = JSON.parse(event.data);
+
+        if (data.type === 'pong') {
+          return;
+        }
+
+        if (Array.isArray(data)) {
+          const messageComponents = data.map(
+            (message) => {
+              const messageUser = participants?.find((participant) => participant.id === message.user_id);
+              const messageUserName = `${messageUser?.second_name} ${messageUser?.first_name}`;
+
+              return new UIMessage({
+                author: messageUserName,
+                text: message.content,
+                isSelfMessage: message.user_id === user.data?.id,
+              });
+            },
+          );
+
+          chat.setProps({
+            items: messageComponents,
+            title: item.title,
+            currentChatId: item.id,
+            isLoading: false,
+          });
+        } else {
+          const messages = chat._lists.items.slice();
+          const messageUser = participants?.find((participant) => participant.id === data.user_id);
+          const messageUserName = `${messageUser?.second_name} ${messageUser?.first_name}`;
+
+          messages.unshift(
+            new UIMessage({
+              author: messageUserName,
+              text: data.content,
+              isSelfMessage: data.user_id === user.data?.id,
+            }),
+          );
+          chat.setProps({ items: messages, isLoading: false });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  };
+}
+
+async function getAndSetChatList(itemsParentComponent: Component) {
+  const chats = await getChats();
+
+  if (chats) {
+    const items = chats.map(
+      (item) =>
+        new MessengerCard({
+          name: item.title,
+          message: item.last_message?.content || 'Пока нет сообщений',
+          isActive: false,
+          deleteChat: async () => {
+            try {
+              await deleteChat(item.id);
+            } catch (e) {
+              console.error(e);
+              return;
+            }
+            await getAndSetChatList(itemsParentComponent);
+          },
+          events: {
+            click() {
+              onChatCardClick.bind(this)(item)();
+              items.forEach((card) => {
+                card.setProps({ isActive: card._id === this._id });
+              });
+            },
+          },
+        }),
+    );
+
+    itemsParentComponent.setProps({ items });
+  }
+}
+
+const sidebar = new MessengerSidebar({
+  items: [],
+  onChatCreated: async () => {
+    await getAndSetChatList(sidebar);
+  },
+});
+
 export class MessengerPage extends Component {
   constructor() {
-    const searchInput = new UIInputField({
-      placeholder: 'Поиск',
-      name: 'search',
-    });
-    const sideBarItems = [
-      new MessengerCard({
-        name: 'Иван Иванов',
-        message: 'Lorem ipsum',
-        className: 'messenger-page__card',
-      }),
-      new MessengerCard({
-        name: 'Евгений Сидоров',
-        message: 'Lorem ipsum ыфвфыв фывфывф фывфцв',
-        className: 'messenger-page__card',
-      }),
-    ];
-    const chat = new MessengerChat({
-      items: [
-        new UIMessage({
-          text: `Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-           Deleniti facere facilis mollitia nulla odit provident quod repellat,
-            tenetur. Aspernatur consequuntur ea impedit, ratione recusandae
-             temporibus vero? Ducimus eos fugiat libero nulla, pariatur tenetur
-              veniam vitae. Ad animi blanditiis dolor doloremque dolores et ex
-               fuga illo impedit, laboriosam laborum modi neque quam quis sed
-                tempora voluptate? Consectetur dolor esse harum libero minus 
-                non numquam obcaecati vel velit veniam! A accusamus deleniti 
-                numquam pariatur rem sint voluptatibus? Ab animi aut est, facere
-                 officia sed voluptatum. Aliquid autem commodi cumque distinctio
-                  eaque, fuga ipsam magnam molestiae officia placeat quaerat quia
-                   repellat repellendus voluptas?`,
-        }),
-        new UIMessage({
-          text: 'Ок.',
-          className: 'ui-message_self',
-        }),
-      ].reverse(),
-    });
-    const sidebar = new MessengerSidebar({
-      className: 'asdasdaw',
-      items: sideBarItems,
-      input: searchInput,
-    });
     super({
       sidebar,
       chat,
@@ -71,5 +152,15 @@ export class MessengerPage extends Component {
 
   render() {
     return this.compile(template);
+  }
+
+  async componentDidMount() {
+    await getUser();
+
+    if (!user.data) {
+      router.go('/');
+    }
+
+    await getAndSetChatList(sidebar);
   }
 }
